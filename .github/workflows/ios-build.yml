@@ -13,8 +13,8 @@ jobs:
     runs-on: macos-latest
 
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
+      - name: Checkout Code manually
+        run: git clone https://github.com/Pingun96/in3d.git .
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
