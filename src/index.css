@@ -1,0 +1,93 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --bg-deep-black: #0f1011; /* X1C dark background */
+    --bg-panel: #1a1b1e;      /* Slightly lighter for panels */
+    --accent-bambu: #00e676;  /* Bambu Green */
+    --accent-bambu-dark: #00c853;
+    --text-primary: #ffffff;
+    --text-secondary: #a0a0a0;
+    --danger: #ff5252;
+    --warning: #ffd740;
+    --border-color: #2c2e33;
+  }
+  
+  body {
+    background-color: var(--bg-deep-black);
+    color: var(--text-primary);
+    font-family: 'Inter', 'Roboto', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    overflow: hidden; /* Prevent scrolling entirely for X1C touch feel */
+    user-select: none; /* Prevent text selection */
+    -webkit-user-select: none;
+    touch-action: none; /* Prevent default touch actions like pinch zoom */
+  }
+
+  /* Force landscape behavior on mobile/capacitor */
+  #root {
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+  }
+}
+
+@layer components {
+  /* Common panel style for X1C */
+  .x1c-panel {
+    @apply bg-[#2b2b2d] rounded-xl text-white transition-all duration-200;
+  }
+
+  /* Buttons */
+  .x1c-btn {
+    @apply flex items-center justify-center bg-[#3a3a3c] text-white rounded-xl font-medium transition-all duration-200 active:scale-95 hover:bg-[#444];
+  }
+
+  .x1c-btn-primary {
+    @apply flex items-center justify-center rounded-xl font-medium transition-all duration-200 active:scale-95 bg-[#00e676] text-black hover:bg-[#00c853] active:bg-[#00a844];
+  }
+
+  .x1c-btn-danger {
+    @apply flex items-center justify-center rounded-xl font-medium transition-all duration-200 active:scale-95 bg-[#ff5252] text-white hover:bg-[#ff1744] active:bg-[#d50000];
+  }
+
+  /* Input fields */
+  .x1c-input {
+    @apply w-full bg-[#3a3a3c] border-none text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-1 focus:ring-[#00e676] transition-all;
+  }
+
+  /* Sidebar styling */
+  .x1c-sidebar {
+    @apply flex flex-col items-center py-4 bg-[#0f1011] border-r border-[#2c2e33] w-20 flex-shrink-0 z-50;
+  }
+
+  .x1c-sidebar-btn {
+    @apply w-12 h-12 flex items-center justify-center rounded-xl text-[#a0a0a0] mb-4 transition-all duration-200;
+  }
+
+  .x1c-sidebar-btn.active {
+    @apply bg-[#1a1b1e] text-[#00e676] shadow-[0_0_10px_rgba(0,230,118,0.2)];
+  }
+
+  /* Status values */
+  .x1c-value-large {
+    @apply text-4xl font-bold text-white tracking-tight;
+  }
+  
+  .x1c-value-label {
+    @apply text-sm text-[#a0a0a0] font-medium uppercase tracking-wider;
+  }
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+* {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
