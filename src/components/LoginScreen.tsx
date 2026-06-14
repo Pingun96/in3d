@@ -32,22 +32,22 @@ interface LoginScreenProps {
 
 export function LoginScreen(props: LoginScreenProps) {
   return (
-    <div className="h-full w-full flex items-center justify-center p-6 bg-[#0f1011] relative overflow-hidden">
+    <div className="min-h-[100dvh] w-full flex bg-[#0f1011] relative overflow-y-auto p-4">
       
       {/* Decorative Background circles for premium feel */}
-      <div className="absolute top-[-10%] right-[-5%] w-[40vw] h-[40vw] rounded-full bg-[#00e676] opacity-5 blur-[120px]"></div>
-      <div className="absolute bottom-[-10%] left-[-5%] w-[30vw] h-[30vw] rounded-full bg-[#00b0ff] opacity-5 blur-[120px]"></div>
+      <div className="absolute top-[-10%] right-[-5%] w-[40vw] h-[40vw] rounded-full bg-[#00e676] opacity-5 blur-[120px] pointer-events-none"></div>
+      <div className="absolute bottom-[-10%] left-[-5%] w-[30vw] h-[30vw] rounded-full bg-[#00b0ff] opacity-5 blur-[120px] pointer-events-none"></div>
 
       {/* Login Panel */}
-      <div className="w-full max-w-md x1c-panel p-8 z-10 shadow-2xl">
+      <div className="m-auto w-full max-w-md x1c-panel p-6 z-10 shadow-2xl relative">
         
-        <div className="text-center mb-8">
+        <div className="text-center mb-4 sm:mb-8">
           <h2 className="text-3xl font-bold text-white tracking-wide">Bambu Connect</h2>
           <p className="text-[#a0a0a0] mt-1 text-sm tracking-wider uppercase">Printer Connection</p>
         </div>
         
         {/* Connection Mode Toggle */}
-        <div className="flex bg-[#111111] p-1 rounded-xl mb-8 border border-[#2c2e33]">
+        <div className="flex bg-[#111111] p-1 rounded-xl mb-4 sm:mb-8 border border-[#2c2e33]">
           <button 
             onClick={() => props.setLoginMode('cloud')}
             className={`flex-1 py-3 text-sm font-semibold rounded-lg transition-all flex items-center justify-center gap-2 ${props.loginMode === 'cloud' ? 'bg-[#2c2e33] text-white shadow-md' : 'text-[#a0a0a0] hover:text-[#e0e0e0]'}`}
@@ -65,9 +65,9 @@ export function LoginScreen(props: LoginScreenProps) {
         {props.loginMode === 'cloud' && (
           <div>
             {props.cloudDevices.length === 0 ? (
-              <form onSubmit={props.handleCloudLogin} className="flex flex-col gap-4">
+              <form onSubmit={props.handleCloudLogin} className="flex flex-col gap-3">
                 
-                <div className="bg-[#111111] border border-[#2c2e33] rounded-xl p-4 flex items-start gap-3">
+                <div className="bg-[#111111] border border-[#2c2e33] rounded-xl p-3 flex items-start gap-3">
                   <Info className="text-[#a0a0a0] shrink-0 mt-0.5" size={18} />
                   <p className="text-xs text-[#a0a0a0] leading-relaxed">
                     Google login is not supported directly. Create a password in Bambu Lab Account Settings first.
@@ -116,7 +116,7 @@ export function LoginScreen(props: LoginScreenProps) {
                   <p className="text-xs text-[#ff5252] flex items-center gap-1"><AlertTriangle size={14} /> {props.connectionError}</p>
                 )}
                 
-                <button type="submit" disabled={props.isLoggingIn} className="w-full x1c-btn-primary py-3 mt-4">
+                <button type="submit" disabled={props.isLoggingIn} className="w-full x1c-btn-primary py-2.5 sm:py-3 mt-2 sm:mt-4">
                   {props.isLoggingIn ? <RefreshCw className="animate-spin mx-auto" size={20} /> : 'Login to Cloud'}
                 </button>
               </form>
@@ -162,7 +162,7 @@ export function LoginScreen(props: LoginScreenProps) {
         )}
 
         {props.loginMode === 'local' && (
-          <form onSubmit={props.handleConnectLocal} className="flex flex-col gap-4">
+          <form onSubmit={props.handleConnectLocal} className="flex flex-col gap-3">
             <input 
               type="text" 
               value={props.ip} 
@@ -189,7 +189,7 @@ export function LoginScreen(props: LoginScreenProps) {
               <p className="text-xs text-[#ff5252] flex items-center gap-1"><AlertTriangle size={14} /> {props.connectionError}</p>
             )}
             
-            <button type="submit" disabled={props.isConnecting} className="w-full x1c-btn py-3 mt-4 bg-[#2c2e33] hover:bg-[#3f424a] text-white">
+            <button type="submit" disabled={props.isConnecting} className="w-full x1c-btn py-2.5 sm:py-3 mt-2 sm:mt-4 bg-[#2c2e33] hover:bg-[#3f424a] text-white">
               {props.isConnecting ? <RefreshCw className="animate-spin mx-auto" size={20} /> : 'Connect Local'}
             </button>
           </form>
