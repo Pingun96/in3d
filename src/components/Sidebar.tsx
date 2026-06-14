@@ -129,13 +129,13 @@ export function Sidebar({ activeTab, setActiveTab, hmsErrors, printState }: Side
   };
 
   return (
-    <div className="w-16 xl:w-20 h-full bg-[#1e1e1e] flex flex-col items-center py-2 xl:py-6 border-r border-[#2b2b2b]">
+    <div className="w-14 sm:w-16 xl:w-20 h-full bg-[#1e1e1e] flex flex-col items-center py-1 sm:py-2 xl:py-6 border-r border-[#2b2b2b]">
       <div className="flex flex-col flex-1 w-full items-center justify-around xl:justify-evenly">
         {tabs.map((tab) => (
           <div
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`w-12 h-12 xl:w-14 xl:h-14 flex items-center justify-center rounded-xl cursor-pointer transition-colors ${
+            className={`w-10 h-10 sm:w-12 sm:h-12 xl:w-14 xl:h-14 flex items-center justify-center rounded-xl cursor-pointer transition-colors ${
               activeTab === tab.id
                 ? 'text-[#00e676]'
                 : 'text-[#888] hover:text-[#e0e0e0]'
@@ -150,7 +150,7 @@ export function Sidebar({ activeTab, setActiveTab, hmsErrors, printState }: Side
       <div className="mt-auto mb-2 w-full flex items-center justify-center">
         <div 
           onClick={togglePrinterPower}
-          className={`w-12 h-12 xl:w-14 xl:h-14 flex items-center justify-center rounded-xl cursor-pointer transition-colors hover:bg-[#333] ${
+          className={`w-10 h-10 sm:w-12 sm:h-12 xl:w-14 xl:h-14 flex items-center justify-center rounded-xl cursor-pointer transition-colors hover:bg-[#333] ${
             isPowerOn === true ? 'text-[#00e676] shadow-[0_0_15px_rgba(0,230,118,0.2)]' : 
             isPowerOn === false ? 'text-[#ff5252]' : 
             'text-[#888]'

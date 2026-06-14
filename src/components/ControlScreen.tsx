@@ -81,24 +81,24 @@ export function ControlScreen({
            <h3 className="text-white font-normal text-xl mb-8 text-center tracking-wide">
              Set {activeModal === 'nozzle' ? 'Nozzle' : 'Heatbed'} Temp
            </h3>
-           <div className="w-full bg-[#111] text-white p-4 rounded-xl text-center text-4xl mb-8 border border-[#444] h-20 flex items-center justify-center font-light tracking-wider shadow-inner">
-             {inputValue || '0'} <span className="text-2xl text-[#888] ml-1 mt-1">°C</span>
+           <div className="w-full bg-[#111] text-white p-2 sm:p-4 rounded-xl text-center text-3xl sm:text-4xl mb-4 sm:mb-8 border border-[#444] h-12 sm:h-20 flex items-center justify-center font-light tracking-wider shadow-inner">
+             {inputValue || '0'} <span className="text-xl sm:text-2xl text-[#888] ml-1 mt-1">°C</span>
            </div>
-           <button className="w-full bg-[#00e676] hover:bg-[#00c853] text-black font-medium py-4 rounded-xl transition-colors text-lg shadow-[0_0_15px_rgba(0,230,118,0.3)]" onClick={handleSetTemp}>
+           <button className="w-full bg-[#00e676] hover:bg-[#00c853] text-black font-medium py-3 sm:py-4 rounded-xl transition-colors text-base sm:text-lg shadow-[0_0_15px_rgba(0,230,118,0.3)]" onClick={handleSetTemp}>
              Confirm
            </button>
          </div>
 
          {/* Right Side: Numpad */}
-         <div className="flex-1 grid grid-cols-3 gap-3 pt-6 pb-2 pr-2">
+         <div className="flex-1 grid grid-cols-3 gap-2 sm:gap-3 pt-4 sm:pt-6 pb-2 pr-2">
            {['1', '2', '3', '4', '5', '6', '7', '8', '9', '', '0', 'back'].map((key, i) => (
              <div 
                key={i} 
                onClick={() => key !== '' && handleKeypadPress(key)}
-               className={`h-16 flex items-center justify-center rounded-xl text-2xl font-normal transition-colors select-none ${key === '' ? 'pointer-events-none' : 'bg-[#38383a] hover:bg-[#4a4a4c] cursor-pointer text-[#f0f0f0] border border-[#444] shadow-sm active:bg-[#555]'}`}
+               className={`h-10 sm:h-16 flex items-center justify-center rounded-xl text-xl sm:text-2xl font-normal transition-colors select-none ${key === '' ? 'pointer-events-none' : 'bg-[#38383a] hover:bg-[#4a4a4c] cursor-pointer text-[#f0f0f0] border border-[#444] shadow-sm active:bg-[#555]'}`}
              >
                {key === 'back' ? (
-                 <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/><line x1="18" y1="9" x2="12" y2="15"/><line x1="12" y1="9" x2="18" y2="15"/></svg>
+                 <svg viewBox="0 0 24 24" className="w-[20px] h-[20px] sm:w-[28px] sm:h-[28px]" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/><line x1="18" y1="9" x2="12" y2="15"/><line x1="12" y1="9" x2="18" y2="15"/></svg>
                ) : key}
              </div>
            ))}
@@ -113,17 +113,17 @@ export function ControlScreen({
          <X size={24} className="absolute top-4 right-4 text-[#888] cursor-pointer hover:text-white" onClick={closeModal} />
          <h3 className="text-white font-bold text-lg mb-6 text-center">Fan Control</h3>
          
-         <div className="flex flex-col gap-6">
+         <div className="flex flex-col gap-3 sm:gap-6">
            <div>
-             <div className="flex justify-between text-sm mb-2"><span className="text-[#a0a0a0] font-medium">Part Cooling</span><span className="text-[#00e676] font-bold">{fanPart}%</span></div>
+             <div className="flex justify-between text-xs sm:text-sm mb-1 sm:mb-2"><span className="text-[#a0a0a0] font-medium">Part Cooling</span><span className="text-[#00e676] font-bold">{fanPart}%</span></div>
              <input type="range" min="0" max="100" value={fanPart} onChange={e => onControlFan('part', parseInt(e.target.value))} className="w-full accent-[#00e676]" />
            </div>
            <div>
-             <div className="flex justify-between text-sm mb-2"><span className="text-[#a0a0a0] font-medium">Auxiliary</span><span className="text-[#00e676] font-bold">{fanAux}%</span></div>
+             <div className="flex justify-between text-xs sm:text-sm mb-1 sm:mb-2"><span className="text-[#a0a0a0] font-medium">Auxiliary</span><span className="text-[#00e676] font-bold">{fanAux}%</span></div>
              <input type="range" min="0" max="100" value={fanAux} onChange={e => onControlFan('aux', parseInt(e.target.value))} className="w-full accent-[#00e676]" />
            </div>
            <div>
-             <div className="flex justify-between text-sm mb-2"><span className="text-[#a0a0a0] font-medium">Chamber</span><span className="text-[#00e676] font-bold">{fanChamber}%</span></div>
+             <div className="flex justify-between text-xs sm:text-sm mb-1 sm:mb-2"><span className="text-[#a0a0a0] font-medium">Chamber</span><span className="text-[#00e676] font-bold">{fanChamber}%</span></div>
              <input type="range" min="0" max="100" value={fanChamber} onChange={e => onControlFan('chamber', parseInt(e.target.value))} className="w-full accent-[#00e676]" />
            </div>
          </div>
@@ -136,20 +136,20 @@ export function ControlScreen({
        <div className="bg-[#2b2b2d] rounded-xl p-6 w-[80%] max-w-sm relative">
          <X size={24} className="absolute top-4 right-4 text-[#888] cursor-pointer hover:text-white" onClick={closeModal} />
          <h3 className="text-white font-bold text-lg mb-6 text-center">Motion Control</h3>
-         <div className="flex gap-8 justify-center">
-           <div className="flex flex-col gap-2 items-center">
-             <button className="bg-[#3a3a3c] hover:bg-[#4a4a4c] w-14 h-14 rounded-lg text-white font-bold text-xl flex items-center justify-center" onClick={() => controlAxis('Y', -10)}>↑</button>
-             <div className="flex gap-2">
-               <button className="bg-[#3a3a3c] hover:bg-[#4a4a4c] w-14 h-14 rounded-lg text-white font-bold text-xl flex items-center justify-center" onClick={() => controlAxis('X', -10)}>←</button>
-               <div className="w-14 h-14 flex items-center justify-center text-[#555] font-bold text-xs">X/Y</div>
-               <button className="bg-[#3a3a3c] hover:bg-[#4a4a4c] w-14 h-14 rounded-lg text-white font-bold text-xl flex items-center justify-center" onClick={() => controlAxis('X', 10)}>→</button>
+         <div className="flex gap-4 sm:gap-8 justify-center">
+           <div className="flex flex-col gap-1 sm:gap-2 items-center">
+             <button className="bg-[#3a3a3c] hover:bg-[#4a4a4c] w-10 h-10 sm:w-14 sm:h-14 rounded-lg text-white font-bold text-lg sm:text-xl flex items-center justify-center" onClick={() => controlAxis('Y', -10)}>↑</button>
+             <div className="flex gap-1 sm:gap-2">
+               <button className="bg-[#3a3a3c] hover:bg-[#4a4a4c] w-10 h-10 sm:w-14 sm:h-14 rounded-lg text-white font-bold text-lg sm:text-xl flex items-center justify-center" onClick={() => controlAxis('X', -10)}>←</button>
+               <div className="w-10 h-10 sm:w-14 sm:h-14 flex items-center justify-center text-[#555] font-bold text-[10px] sm:text-xs">X/Y</div>
+               <button className="bg-[#3a3a3c] hover:bg-[#4a4a4c] w-10 h-10 sm:w-14 sm:h-14 rounded-lg text-white font-bold text-lg sm:text-xl flex items-center justify-center" onClick={() => controlAxis('X', 10)}>→</button>
              </div>
-             <button className="bg-[#3a3a3c] hover:bg-[#4a4a4c] w-14 h-14 rounded-lg text-white font-bold text-xl flex items-center justify-center" onClick={() => controlAxis('Y', 10)}>↓</button>
+             <button className="bg-[#3a3a3c] hover:bg-[#4a4a4c] w-10 h-10 sm:w-14 sm:h-14 rounded-lg text-white font-bold text-lg sm:text-xl flex items-center justify-center" onClick={() => controlAxis('Y', 10)}>↓</button>
            </div>
-           <div className="flex flex-col gap-2 items-center justify-center">
-             <button className="bg-[#3a3a3c] hover:bg-[#4a4a4c] w-14 h-14 rounded-lg text-white font-bold text-xl flex items-center justify-center" onClick={() => controlAxis('Z', -10)}>↑</button>
-             <div className="w-14 h-14 flex items-center justify-center text-[#555] font-bold text-xs">Z</div>
-             <button className="bg-[#3a3a3c] hover:bg-[#4a4a4c] w-14 h-14 rounded-lg text-white font-bold text-xl flex items-center justify-center" onClick={() => controlAxis('Z', 10)}>↓</button>
+           <div className="flex flex-col gap-1 sm:gap-2 items-center justify-center">
+             <button className="bg-[#3a3a3c] hover:bg-[#4a4a4c] w-10 h-10 sm:w-14 sm:h-14 rounded-lg text-white font-bold text-lg sm:text-xl flex items-center justify-center" onClick={() => controlAxis('Z', -10)}>↑</button>
+             <div className="w-10 h-10 sm:w-14 sm:h-14 flex items-center justify-center text-[#555] font-bold text-[10px] sm:text-xs">Z</div>
+             <button className="bg-[#3a3a3c] hover:bg-[#4a4a4c] w-10 h-10 sm:w-14 sm:h-14 rounded-lg text-white font-bold text-lg sm:text-xl flex items-center justify-center" onClick={() => controlAxis('Z', 10)}>↓</button>
            </div>
          </div>
        </div>
@@ -163,62 +163,62 @@ export function ControlScreen({
              <ChevronLeft size={28} />
           </button>
           <h2 className="text-white text-2xl font-normal">Speed</h2>
-       </div>
-       <div className="flex-1 flex flex-row items-center justify-center p-6 gap-8">
-          <div className="flex-1 flex flex-col items-center justify-center">
-             <div className="w-48 h-48 mb-8 flex items-center justify-center opacity-90 relative">
-                <img src="/toolhead.png" alt="Toolhead" className="absolute inset-0 w-full h-full object-contain z-10" onError={(e) => {
-                  e.currentTarget.style.display = 'none';
-                }} />
-                {/* Fallback CSS Toolhead Graphic */}
-                <div className="w-40 h-48 bg-gradient-to-b from-[#888] to-[#666] rounded-t-2xl rounded-b-md shadow-2xl border border-[#999] relative flex flex-col items-center">
-                   <div className="w-full h-10 bg-[#444] rounded-t-2xl opacity-80 flex justify-center gap-3 pt-3">
-                      <div className="w-2 h-5 bg-[#222] rounded-sm"></div>
-                      <div className="w-2 h-5 bg-[#222] rounded-sm"></div>
-                      <div className="w-2 h-5 bg-[#222] rounded-sm"></div>
-                      <div className="w-2 h-5 bg-[#222] rounded-sm"></div>
-                   </div>
-                   <div className="text-[#333] font-bold text-[10px] mt-2 opacity-60 tracking-widest">Bambu Lab</div>
-                   <div className="w-20 h-20 bg-[#222] rounded-full border-4 border-[#555] mt-4 flex items-center justify-center shadow-inner">
-                      <div className="w-12 h-12 bg-[#111] rounded-full"></div>
-                   </div>
-                   <div className="absolute bottom-0 w-full h-8 bg-[#333] flex justify-center items-end pb-1 rounded-b-md">
-                      <div className="w-0 h-0 border-l-[8px] border-l-transparent border-r-[8px] border-r-transparent border-t-[10px] border-t-white"></div>
-                   </div>
-                </div>
-             </div>
+          <div className="flex-1 flex flex-row items-center justify-center p-2 sm:p-6 gap-2 sm:gap-8 overflow-y-auto">
+           <div className="flex-1 flex flex-col items-center justify-center">
+              <div className="w-[100px] h-[100px] sm:w-[192px] sm:h-[192px] mb-2 sm:mb-8 flex items-center justify-center opacity-90 relative">
+                 <img src="/toolhead.png" alt="Toolhead" className="absolute inset-0 w-full h-full object-contain z-10" onError={(e) => {
+                   e.currentTarget.style.display = 'none';
+                 }} />
+                 {/* Fallback CSS Toolhead Graphic */}
+                 <div className="w-[80px] h-[100px] sm:w-40 sm:h-48 bg-gradient-to-b from-[#888] to-[#666] rounded-t-2xl rounded-b-md shadow-2xl border border-[#999] relative flex flex-col items-center">
+                    <div className="w-full h-4 sm:h-10 bg-[#444] rounded-t-2xl opacity-80 flex justify-center gap-1 sm:gap-3 pt-1 sm:pt-3">
+                       <div className="w-1 sm:w-2 h-2 sm:h-5 bg-[#222] rounded-sm"></div>
+                       <div className="w-1 sm:w-2 h-2 sm:h-5 bg-[#222] rounded-sm"></div>
+                       <div className="w-1 sm:w-2 h-2 sm:h-5 bg-[#222] rounded-sm"></div>
+                       <div className="w-1 sm:w-2 h-2 sm:h-5 bg-[#222] rounded-sm"></div>
+                    </div>
+                    <div className="text-[#333] font-bold text-[6px] sm:text-[10px] mt-1 sm:mt-2 opacity-60 tracking-widest">Bambu Lab</div>
+                    <div className="w-8 h-8 sm:w-20 sm:h-20 bg-[#222] rounded-full border-2 sm:border-4 border-[#555] mt-1 sm:mt-4 flex items-center justify-center shadow-inner">
+                       <div className="w-4 h-4 sm:w-12 sm:h-12 bg-[#111] rounded-full"></div>
+                    </div>
+                    <div className="absolute bottom-0 w-full h-4 sm:h-8 bg-[#333] flex justify-center items-end pb-0.5 sm:pb-1 rounded-b-md">
+                       <div className="w-0 h-0 border-l-[4px] sm:border-l-[8px] border-l-transparent border-r-[4px] sm:border-r-[8px] border-r-transparent border-t-[6px] sm:border-t-[10px] border-t-white"></div>
+                    </div>
+                 </div>
+              </div>
+           </div>
              
              <p className="text-[#a0a0a0] text-sm text-center leading-relaxed">
                It is recommended to use Standard Mode.<br/>
                Sport Mode and Ludicrous Mode can increase<br/>
                the print speed but may affect quality.
              </p>
-          </div>
-          <div className="flex-1 flex flex-col justify-center gap-4 px-8 max-w-[340px]">
+                <div className="flex-1 flex flex-col justify-center gap-2 sm:gap-4 px-2 sm:px-8 max-w-[340px]">
              <button 
-                className={`w-full py-4 rounded-xl font-normal text-lg transition-colors ${speedLvl === 4 ? 'bg-[#a3ff00] text-black shadow-[0_0_15px_rgba(163,255,0,0.2)]' : 'bg-[#404040] text-[#e0e0e0] hover:bg-[#505050]'}`}
+                className={`w-full py-2 sm:py-4 rounded-xl font-normal text-sm sm:text-lg transition-colors ${speedLvl === 4 ? 'bg-[#a3ff00] text-black shadow-[0_0_15px_rgba(163,255,0,0.2)]' : 'bg-[#404040] text-[#e0e0e0] hover:bg-[#505050]'}`}
                 onClick={() => { controlSpeed?.(4); closeModal(); }}
              >
                 Ludicrous (166%)
              </button>
              <button 
-                className={`w-full py-4 rounded-xl font-normal text-lg transition-colors ${speedLvl === 3 ? 'bg-[#a3ff00] text-black shadow-[0_0_15px_rgba(163,255,0,0.2)]' : 'bg-[#404040] text-[#e0e0e0] hover:bg-[#505050]'}`}
+                className={`w-full py-2 sm:py-4 rounded-xl font-normal text-sm sm:text-lg transition-colors ${speedLvl === 3 ? 'bg-[#a3ff00] text-black shadow-[0_0_15px_rgba(163,255,0,0.2)]' : 'bg-[#404040] text-[#e0e0e0] hover:bg-[#505050]'}`}
                 onClick={() => { controlSpeed?.(3); closeModal(); }}
              >
                 Sport (124%)
              </button>
              <button 
-                className={`w-full py-4 rounded-xl font-normal text-lg transition-colors ${speedLvl === 2 || !speedLvl ? 'bg-[#a3ff00] text-black shadow-[0_0_15px_rgba(163,255,0,0.2)]' : 'bg-[#404040] text-[#e0e0e0] hover:bg-[#505050]'}`}
+                className={`w-full py-2 sm:py-4 rounded-xl font-normal text-sm sm:text-lg transition-colors ${speedLvl === 2 || !speedLvl ? 'bg-[#a3ff00] text-black shadow-[0_0_15px_rgba(163,255,0,0.2)]' : 'bg-[#404040] text-[#e0e0e0] hover:bg-[#505050]'}`}
                 onClick={() => { controlSpeed?.(2); closeModal(); }}
              >
                 Standard (100%)
              </button>
              <button 
-                className={`w-full py-4 rounded-xl font-normal text-lg transition-colors ${speedLvl === 1 ? 'bg-[#a3ff00] text-black shadow-[0_0_15px_rgba(163,255,0,0.2)]' : 'bg-[#404040] text-[#e0e0e0] hover:bg-[#505050]'}`}
+                className={`w-full py-2 sm:py-4 rounded-xl font-normal text-sm sm:text-lg transition-colors ${speedLvl === 1 ? 'bg-[#a3ff00] text-black shadow-[0_0_15px_rgba(163,255,0,0.2)]' : 'bg-[#404040] text-[#e0e0e0] hover:bg-[#505050]'}`}
                 onClick={() => { controlSpeed?.(1); closeModal(); }}
              >
                 Silent (50%)
              </button>
+           </div>
           </div>
        </div>
     </div>

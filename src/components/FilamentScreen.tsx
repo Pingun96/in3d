@@ -201,12 +201,12 @@ export function FilamentScreen({
          </div>
 
          <div className="flex-1 overflow-y-auto p-2 sm:p-4 flex justify-center">
-            <div className="bg-[#2a2a2b] rounded-xl p-5 w-full max-w-2xl shadow-lg border border-[#3a3a3c] flex flex-col justify-between">
+            <div className="bg-[#2a2a2b] rounded-xl p-3 sm:p-5 w-full max-w-2xl shadow-lg border border-[#3a3a3c] flex flex-col justify-between">
                
                <div>
                  {/* Filament */}
-                 <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-5 gap-3">
-                    <div className="text-[#e0e0e0] text-[17px] w-36">Filament</div>
+                 <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-2 sm:mb-5 gap-2 sm:gap-3">
+                    <div className="text-[#e0e0e0] text-sm sm:text-[17px] w-auto sm:w-36">Filament</div>
                     <div className="flex-1 flex flex-col">
                        <div className="flex gap-3 w-full">
                           <div className={`relative flex-1 rounded-lg border ${isBambuFilament ? 'bg-[#333] border-[#444] opacity-80' : 'bg-[#383838] border-[#4a4a4a] hover:bg-[#404040]'}`}>
@@ -214,7 +214,7 @@ export function FilamentScreen({
                                disabled={isBambuFilament}
                                value={editBrand}
                                onChange={(e) => setEditBrand(e.target.value)}
-                               className="w-full appearance-none bg-transparent px-3 py-2 text-[#e0e0e0] text-[15px] focus:outline-none disabled:text-[#888] cursor-pointer disabled:cursor-not-allowed"
+                               className="w-full appearance-none bg-transparent px-2 sm:px-3 py-1.5 sm:py-2 text-[#e0e0e0] text-xs sm:text-[15px] focus:outline-none disabled:text-[#888] cursor-pointer disabled:cursor-not-allowed"
                              >
                                <option value="Bambu Lab">Bambu Lab</option>
                                <option value="Generic">Generic</option>
@@ -230,7 +230,7 @@ export function FilamentScreen({
                                disabled={isBambuFilament}
                                value={editType}
                                onChange={(e) => setEditType(e.target.value)}
-                               className="w-full appearance-none bg-transparent px-3 py-2 text-[#e0e0e0] text-[15px] focus:outline-none disabled:text-[#888] cursor-pointer disabled:cursor-not-allowed"
+                               className="w-full appearance-none bg-transparent px-2 sm:px-3 py-1.5 sm:py-2 text-[#e0e0e0] text-xs sm:text-[15px] focus:outline-none disabled:text-[#888] cursor-pointer disabled:cursor-not-allowed"
                              >
                                <option value="PLA Basic">PLA Basic</option>
                                <option value="PLA Matte">PLA Matte</option>
@@ -250,8 +250,8 @@ export function FilamentScreen({
                  </div>
 
                  {/* Color */}
-                 <div className="flex items-center justify-between mb-5">
-                    <div className="text-[#e0e0e0] text-[17px] w-36">Color</div>
+                 <div className="flex items-center justify-between mb-2 sm:mb-5 mt-2 sm:mt-0">
+                    <div className="text-[#e0e0e0] text-sm sm:text-[17px] w-auto sm:w-36">Color</div>
                     <div className="flex-1 flex justify-start">
                        <label className={`flex items-center gap-3 ${!isBambuFilament ? 'cursor-pointer' : 'cursor-not-allowed'}`}>
                           <div className="w-8 h-8 rounded-md shadow-sm border border-[#222]" style={{ backgroundColor: editColor }}></div>
@@ -266,20 +266,20 @@ export function FilamentScreen({
                  </div>
 
                  {/* Nozzle Temp */}
-                 <div className="flex items-center justify-between mb-5">
-                    <div className="text-[#e0e0e0] text-[17px] w-36">Nozzle Temperature</div>
-                    <div className="flex-1 flex justify-start gap-6 text-[#d0d0d0] text-[15px]">
-                       <div>Minimum &nbsp;&nbsp;<span className="font-bold text-white">190 °C</span></div>
-                       <div>Maximum &nbsp;&nbsp;<span className="font-bold text-white">{isBambuFilament ? '230' : '240'} °C</span></div>
+                 <div className="flex items-center justify-between mb-2 sm:mb-5">
+                    <div className="text-[#e0e0e0] text-sm sm:text-[17px] w-auto sm:w-36">Nozzle Temperature</div>
+                    <div className="flex-1 flex justify-end sm:justify-start gap-4 sm:gap-6 text-[#d0d0d0] text-xs sm:text-[15px]">
+                       <div>Min <span className="font-bold text-white">190 °C</span></div>
+                       <div>Max <span className="font-bold text-white">{isBambuFilament ? '230' : '240'} °C</span></div>
                     </div>
                  </div>
 
                  {/* Dynamic Pressure */}
-                 <div className="flex items-center justify-between mb-3">
-                    <div className="text-[#e0e0e0] text-[17px] w-36 leading-snug">Dynamic Pressure<br/>Control</div>
-                    <div className="flex-1 flex justify-start">
-                       <div className="bg-[#383838] px-3 py-2 rounded-lg flex items-center justify-between min-w-[140px] border border-[#4a4a4a] cursor-pointer hover:bg-[#404040]">
-                          <span className="text-[#e0e0e0] text-[15px]">Default</span>
+                 <div className="flex items-center justify-between mb-1 sm:mb-3">
+                    <div className="text-[#e0e0e0] text-sm sm:text-[17px] w-auto sm:w-36 leading-snug">Dynamic Pressure</div>
+                    <div className="flex-1 flex justify-end sm:justify-start">
+                       <div className="bg-[#383838] px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg flex items-center justify-between min-w-[100px] sm:min-w-[140px] border border-[#4a4a4a] cursor-pointer hover:bg-[#404040]">
+                          <span className="text-[#e0e0e0] text-xs sm:text-[15px]">Default</span>
                           <ChevronDown size={18} className="text-[#a0a0a0]" />
                        </div>
                     </div>
@@ -287,19 +287,19 @@ export function FilamentScreen({
                </div>
 
                {/* Footer / Info & Buttons */}
-               <div className="flex items-center justify-between mt-4 pt-4 border-t border-[#333]">
+               <div className="flex items-center justify-between mt-2 sm:mt-4 pt-2 sm:pt-4 border-t border-[#333]">
                   {isBambuFilament ? (
-                    <div className="text-[#f44336] text-[13px] max-w-[260px] leading-snug p-2 bg-[#2a1111] bg-opacity-30 rounded-md">
+                    <div className="text-[#f44336] text-[10px] sm:text-[13px] max-w-[200px] sm:max-w-[260px] leading-snug p-1.5 sm:p-2 bg-[#2a1111] bg-opacity-30 rounded-md">
                        Information about Bambu Filament is stored in RFID and is read-only.
                     </div>
                   ) : (
                     <div></div>
                   )}
-                  <div className="flex gap-3">
-                     <button className="px-6 py-2.5 bg-[#404040] hover:bg-[#505050] text-[#e0e0e0] rounded-lg font-medium transition-colors text-[15px]" onClick={closeEditModal}>
+                  <div className="flex gap-2 sm:gap-3">
+                     <button className="px-4 sm:px-6 py-1.5 sm:py-2.5 bg-[#404040] hover:bg-[#505050] text-[#e0e0e0] rounded-lg font-medium transition-colors text-xs sm:text-[15px]" onClick={closeEditModal}>
                         Reset
                      </button>
-                     <button className="px-6 py-2.5 bg-[#a3ff00] hover:bg-[#b0ff22] text-black rounded-lg font-medium transition-colors shadow-lg text-[15px]" onClick={closeEditModal}>
+                     <button className="px-4 sm:px-6 py-1.5 sm:py-2.5 bg-[#a3ff00] hover:bg-[#b0ff22] text-black rounded-lg font-medium transition-colors shadow-lg text-xs sm:text-[15px]" onClick={closeEditModal}>
                         Confirm
                      </button>
                   </div>
@@ -354,7 +354,7 @@ export function FilamentScreen({
       {renderTrayModal()}
       {renderEditModal()}
 
-      <div className="relative flex flex-col items-center mt-[-80px]">
+      <div className="relative flex flex-col items-center scale-[0.85] sm:scale-100 mt-0 sm:mt-[-40px] origin-center">
         
         <div className="flex relative z-10">
           
@@ -415,7 +415,7 @@ export function FilamentScreen({
         </div>
 
         {/* Connection Lines & Toolhead */}
-        <div ref={svgContainerRef} className="relative w-[444px] h-[100px] mt-0">
+        <div ref={svgContainerRef} className="relative w-full max-w-[444px] h-[100px] mt-0">
            {/* SVG lines to match the layout perfectly */}
            <svg className="absolute top-0 left-0 w-full h-full" style={{ pointerEvents: 'none' }}>
               {/* Common AMS horizontal bus */}
@@ -446,8 +446,8 @@ export function FilamentScreen({
 
       </div>
 
-      <div className="absolute bottom-6 right-6 flex items-center gap-3">
-         <div className="w-10 h-10 bg-[#2b2b2d] rounded-[8px] border border-[#3a3a3c] flex items-center justify-center cursor-pointer hover:bg-[#353535] transition-colors">
+      <div className="absolute bottom-3 right-3 sm:bottom-6 sm:right-6 flex items-center gap-2 sm:gap-3">
+         <div className="w-8 h-8 sm:w-10 sm:h-10 bg-[#2b2b2d] rounded-[8px] border border-[#3a3a3c] flex items-center justify-center cursor-pointer hover:bg-[#353535] transition-colors">
            <Wrench size={18} className="text-[#a0a0a0]" />
          </div>
          <div className="bg-[#2b2b2d] rounded-[8px] border border-[#3a3a3c] px-6 h-10 flex items-center gap-2 cursor-pointer hover:bg-[#353535] transition-colors">
