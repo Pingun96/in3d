@@ -81,27 +81,7 @@ export function HomeScreen({
     now.setMinutes(now.getMinutes() + printTimeRemaining);
     return now.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
   }, [printTimeRemaining]);
-  // Get AMS data
-  let amsA = { humidity: '51%', slots: [] as string[] };
-  if (amsList && amsList.length > 0 && amsList[0].tray) {
-    amsA.slots = Array.from({ length: 4 }).map((_, i) => {
-      const tray = amsList[0].tray.find((t: any) => parseInt(t.id) === i || (t.id === undefined && i < amsList[0].tray.length));
-      return tray && tray.tray_color ? `#${tray.tray_color.substring(0, 6)}` : 'transparent';
-    });
-  } else {
-    amsA.slots = ['#2196F3', '#E91E63', '#795548', '#4CAF50']; // Simulated colors for the exact screenshot look
-  }
 
-  // To perfectly match the screenshot, we use a 1px solid green border
-  const boxClass = "bg-[#1f1f1f] rounded-[4px] cursor-pointer hover:bg-[#2b2b2d] transition-colors relative flex items-center justify-center";
-
-  // Format the estimated end time
-  const estimatedEndTime = React.useMemo(() => {
-    if (!printTimeRemaining) return '--:--';
-    const now = new Date();
-    now.setMinutes(now.getMinutes() + printTimeRemaining);
-    return now.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
-  }, [printTimeRemaining]);
 
   const isPrinting = printState === 'RUNNING' || printState === 'PAUSE' || printState === 'PRINTING';
 
