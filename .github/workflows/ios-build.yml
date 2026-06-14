@@ -13,8 +13,8 @@ jobs:
     runs-on: macos-latest
 
     steps:
-      - name: Checkout Code manually
-        run: git clone https://github.com/Pingun96/in3d.git .
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -34,7 +34,7 @@ jobs:
         working-directory: ios/App
         run: |
           xcodebuild clean build \
-            -workspace App.xcworkspace \
+            -project App.xcodeproj \
             -scheme App \
             -configuration Release \
             -destination "generic/platform=iOS" \
