@@ -8,7 +8,16 @@ const config: CapacitorConfig = {
     CapacitorHttp: {
       enabled: true,
     },
+    StatusBar: {
+      style: 'DARK',
+      overlaysWebView: true
+    }
   },
+  ios: {
+    contentInset: 'always',
+    scrollEnabled: false,
+    allowsLinkPreview: false
+  }
 };
 
 export default config;
