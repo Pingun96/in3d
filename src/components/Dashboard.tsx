@@ -62,7 +62,7 @@ export function Dashboard(props: DashboardProps) {
     <div className="flex w-full h-full bg-[#1e1e1e] overflow-hidden text-white select-none">
       <Sidebar activeTab={props.activeTab} setActiveTab={props.setActiveTab} hmsErrors={props.hmsErrors} printState={props.printState} />
       
-      <div className="flex-1 h-full overflow-hidden relative flex flex-col">
+      <div className="flex-1 h-full overflow-hidden relative flex flex-col" style={{ paddingRight: 'env(safe-area-inset-right)' }}>
         {props.activeTab === 'home' || props.activeTab === 'dashboard' ? (
           <HomeScreen
             printerName={props.printerName}

@@ -32,7 +32,7 @@ interface LoginScreenProps {
 
 export function LoginScreen(props: LoginScreenProps) {
   return (
-    <div className="min-h-[100dvh] w-full flex bg-[#0f1011] relative overflow-y-auto p-4">
+    <div className="min-h-[100dvh] w-full flex bg-[#0f1011] relative overflow-y-auto p-4" style={{ paddingLeft: 'calc(1rem + env(safe-area-inset-left))', paddingRight: 'calc(1rem + env(safe-area-inset-right))' }}>
       
       {/* Decorative Background circles for premium feel */}
       <div className="absolute top-[-10%] right-[-5%] w-[40vw] h-[40vw] rounded-full bg-[#00e676] opacity-5 blur-[120px] pointer-events-none"></div>
