@@ -67,8 +67,17 @@ export class BambuCloudApi {
         throw new Error(response.data?.error || `Đăng nhập thất bại (Status: ${response.status})`);
       }
 
+      let resData = response.data;
+      if (typeof resData === 'string') {
+        try {
+          resData = JSON.parse(resData);
+        } catch (e) {
+          // ignore
+        }
+      }
+
       // Bambu API trả về { accessToken: "..." } khi thành công (không có code 200)
-      const { accessToken, token, account, error, loginType } = response.data;
+      const { accessToken, token, account, error, loginType } = resData;
       
       if (loginType === 'verifyCode' || (!accessToken && !token && loginType)) {
         throw new Error('REQUIRE_2FA');
@@ -137,7 +146,12 @@ export class BambuCloudApi {
         throw new Error(`Lỗi tải danh sách thiết bị (Status: ${response.status})`);
       }
 
-      const { devices, error } = response.data;
+      let resData = response.data;
+      if (typeof resData === 'string') {
+        try { resData = JSON.parse(resData); } catch(e) {}
+      }
+
+      const { devices, error } = resData;
       if (error) {
         throw new Error(error);
       }
