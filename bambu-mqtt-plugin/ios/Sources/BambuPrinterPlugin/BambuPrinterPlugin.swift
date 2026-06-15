@@ -43,7 +43,18 @@ public class BambuPrinterPlugin: CAPPlugin, CAPBridgedPlugin {
         mqtt.username = username
         mqtt.password = accessCode
         mqtt.enableSSL = true
-        mqtt.allowUntrustCACertificate = true
+        
+        // AWS IoT (Bambu Cloud) requires SNI. We must set kCFStreamSSLPeerName for Cloud host.
+        // For Local LAN (IP address), we skip it and allow untrusted certs.
+        if host.contains(".bambulab.com") {
+            mqtt.sslSettings = [
+                kCFStreamSSLPeerName as String: host as NSObject
+            ]
+            mqtt.allowUntrustCACertificate = false // Cloud uses valid certs
+        } else {
+            mqtt.allowUntrustCACertificate = true // Local LAN uses self-signed
+        }
+        
         mqtt.keepAlive = 30
         mqtt.autoReconnect = true
         mqtt.delegate = self
