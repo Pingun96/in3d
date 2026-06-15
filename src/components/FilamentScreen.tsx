@@ -53,7 +53,8 @@ export function FilamentScreen({
         const getCenter = (el: HTMLElement | null) => {
           if (!el) return 0;
           const rect = el.getBoundingClientRect();
-          return rect.left + (rect.width / 2) - svgRect.left;
+          const scale = svgRect.width / svgContainerRef.current!.offsetWidth;
+          return (rect.left + (rect.width / 2) - svgRect.left) / scale;
         };
 
         const a1 = getCenter(spoolRefs.current[0]);
@@ -349,7 +350,7 @@ export function FilamentScreen({
   ));
 
   return (
-    <div className="flex w-full h-full bg-[#111] overflow-hidden relative items-center justify-center">
+    <div className="flex flex-1 w-full h-full bg-[#111] overflow-hidden relative items-center justify-center">
       
       {renderTrayModal()}
       {renderEditModal()}
