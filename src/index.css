@@ -64,9 +64,10 @@
     @apply w-full bg-[#3a3a3c] border-none text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-1 focus:ring-[#00e676] transition-all;
   }
 
-  /* Sidebar styling */
   .x1c-sidebar {
-    @apply flex flex-col items-center py-4 bg-[#0f1011] border-r border-[#2c2e33] w-20 flex-shrink-0 z-50;
+    @apply flex flex-col items-center py-4 bg-[#0f1011] border-r border-[#2c2e33] flex-shrink-0 z-50;
+    width: calc(5rem + env(safe-area-inset-left));
+    padding-left: env(safe-area-inset-left);
   }
 
   .x1c-sidebar-btn {
