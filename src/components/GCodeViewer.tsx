@@ -3,10 +3,13 @@ import * as GCodePreview from 'gcode-preview';
 
 interface GCodeViewerProps {
   url?: string;
+  gcodeText?: string;
+  filename?: string;
   onClose: () => void;
+  onPrintLocal?: () => void;
 }
 
-export function GCodeViewer({ url, onClose }: GCodeViewerProps) {
+export function GCodeViewer({ url, gcodeText, filename, onClose, onPrintLocal }: GCodeViewerProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -52,7 +55,9 @@ G1 X100 Y120 E12
 G1 X100 Y100 E13
         `;
 
-        if (url) {
+        if (gcodeText) {
+          preview.processGCode(gcodeText);
+        } else if (url) {
           try {
             const response = await fetch(url);
             if (response.ok) {
@@ -97,14 +102,25 @@ G1 X100 Y100 E13
         <div className="flex items-center justify-between bg-[#2a2a2b] p-4 border-b border-[#3a3a3c]">
            <h3 className="text-white font-medium flex items-center gap-2">
              <svg viewBox="0 0 24 24" width="20" height="20" stroke="#00e676" strokeWidth="2" fill="none"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
-             G-Code 3D Viewer
+             {filename ? filename : 'G-Code 3D Viewer'}
            </h3>
-           <button 
-             onClick={onClose}
-             className="bg-black/50 hover:bg-black/80 text-white w-8 h-8 rounded-full flex items-center justify-center border border-white/20 transition-colors"
-           >
-             <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" strokeWidth="2" fill="none"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-           </button>
+           <div className="flex items-center gap-4">
+             {onPrintLocal && (
+               <button 
+                 onClick={onPrintLocal}
+                 className="bg-[#00e676] text-black px-4 py-1.5 rounded-lg text-sm font-bold flex items-center gap-2 hover:bg-[#00c853] transition-colors"
+               >
+                 <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2" fill="none"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+                 IN FILE NÀY
+               </button>
+             )}
+             <button 
+               onClick={onClose}
+               className="bg-black/50 hover:bg-black/80 text-white w-8 h-8 rounded-full flex items-center justify-center border border-white/20 transition-colors"
+             >
+               <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" strokeWidth="2" fill="none"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+             </button>
+           </div>
         </div>
 
         {/* Canvas Container */}

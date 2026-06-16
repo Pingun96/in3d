@@ -13,6 +13,7 @@ export function PrintScreen({ cloudToken, onPrintAgain }: PrintScreenProps) {
   const [loading, setLoading] = useState(true);
   const [activeVideoUrl, setActiveVideoUrl] = useState<string | null>(null);
   const [activeGCodeUrl, setActiveGCodeUrl] = useState<string | null>(null);
+  const [activeGCodeLocal, setActiveGCodeLocal] = useState<{filename: string, content: string} | null>(null);
 
   const fetchTasks = async () => {
     setLoading(true);
@@ -77,12 +78,35 @@ export function PrintScreen({ cloudToken, onPrintAgain }: PrintScreenProps) {
             <BarChart3 className="text-[#a0a0a0]" size={28} />
             Cloud Print History
           </h2>
-          <button 
-            onClick={fetchTasks}
-            className="p-2 bg-[#2a2a2b] hover:bg-[#353535] rounded-lg transition-colors border border-[#3a3a3c]"
-          >
-            <RefreshCw size={20} className={loading ? "animate-spin text-[#00e676]" : "text-[#a0a0a0]"} />
-          </button>
+          <div className="flex gap-3">
+             <label className="cursor-pointer p-2 bg-[#00e676]/10 hover:bg-[#00e676]/20 text-[#00e676] rounded-lg transition-colors border border-[#00e676]/20 flex items-center gap-2">
+                <File size={20} />
+                <span className="hidden sm:inline font-medium text-sm">In File Của Bạn</span>
+                <input 
+                  type="file" 
+                  accept=".gcode"
+                  className="hidden" 
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+                    const reader = new FileReader();
+                    reader.onload = (ev) => {
+                      setActiveGCodeUrl(null);
+                      setActiveGCodeLocal({ filename: file.name, content: ev.target?.result as string });
+                    };
+                    reader.readAsText(file);
+                    // Reset value so we can select same file again if needed
+                    e.target.value = '';
+                  }}
+                />
+             </label>
+             <button 
+               onClick={fetchTasks}
+               className="p-2 bg-[#2a2a2b] hover:bg-[#353535] rounded-lg transition-colors border border-[#3a3a3c]"
+             >
+               <RefreshCw size={20} className={loading ? "animate-spin text-[#00e676]" : "text-[#a0a0a0]"} />
+             </button>
+          </div>
         </div>
 
         {loading ? (
@@ -179,6 +203,17 @@ export function PrintScreen({ cloudToken, onPrintAgain }: PrintScreenProps) {
       {/* 3D GCode Viewer Modal */}
       {activeGCodeUrl !== null && (
         <GCodeViewer url={activeGCodeUrl} onClose={() => setActiveGCodeUrl(null)} />
+      )}
+      {activeGCodeLocal !== null && (
+        <GCodeViewer 
+          gcodeText={activeGCodeLocal.content} 
+          filename={activeGCodeLocal.filename}
+          onClose={() => setActiveGCodeLocal(null)} 
+          onPrintLocal={() => {
+            alert('Tính năng Upload FTPS đang được phát triển. Tạm thời chỉ hỗ trợ xem trước G-Code cục bộ.');
+            setActiveGCodeLocal(null);
+          }}
+        />
       )}
     </div>
   );
