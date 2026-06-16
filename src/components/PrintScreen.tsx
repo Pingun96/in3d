@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { BambuCloudApi } from '../services/BambuCloudApi';
-import { Printer, Clock, File, RefreshCw, PlayCircle, BarChart3, Weight, CheckCircle2 } from 'lucide-react';
+import { Printer, Clock, File, RefreshCw, PlayCircle, BarChart3, Weight, CheckCircle2, Box } from 'lucide-react';
+import { GCodeViewer } from './GCodeViewer';
 
 interface PrintScreenProps {
   cloudToken: string;
@@ -11,6 +12,7 @@ export function PrintScreen({ cloudToken, onPrintAgain }: PrintScreenProps) {
   const [tasks, setTasks] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeVideoUrl, setActiveVideoUrl] = useState<string | null>(null);
+  const [activeGCodeUrl, setActiveGCodeUrl] = useState<string | null>(null);
 
   const fetchTasks = async () => {
     setLoading(true);
@@ -99,18 +101,28 @@ export function PrintScreen({ cloudToken, onPrintAgain }: PrintScreenProps) {
                       <File className="text-[#555]" size={48} />
                     </div>
                   )}
-                  <div className="absolute top-2 right-2 bg-black/60 backdrop-blur-sm px-2 py-1 rounded text-xs border border-white/10 flex items-center gap-1">
-                     <Clock size={12} />
-                     <span>{Math.floor((task.costTime || 0) / 60)} min</span>
+                  <div className="absolute top-2 right-2 flex gap-2">
+                    <div className="bg-black/60 backdrop-blur-sm px-2 py-1 rounded text-xs border border-white/10 flex items-center gap-1">
+                       <Clock size={12} />
+                       <span>{Math.floor((task.costTime || 0) / 60)} min</span>
+                    </div>
                   </div>
                   
                   {/* Nút Xem Timelapse ảo */}
                   <div 
-                    className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer"
-                    onClick={() => setActiveVideoUrl(task.videoUrl || 'demo_video')}
+                    className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer gap-4"
                   >
-                     <div className="bg-[#00e676] text-black p-3 rounded-full shadow-[0_0_15px_rgba(0,230,118,0.5)] transform scale-90 group-hover:scale-100 transition-transform">
+                     <div 
+                       className="bg-[#00e676] text-black p-3 rounded-full shadow-[0_0_15px_rgba(0,230,118,0.5)] transform scale-90 group-hover:scale-100 transition-transform hover:scale-110"
+                       onClick={(e) => { e.stopPropagation(); setActiveVideoUrl(task.videoUrl || 'demo_video'); }}
+                     >
                         <PlayCircle size={28} />
+                     </div>
+                     <div 
+                       className="bg-[#2a2a2b] border border-[#555] text-white p-3 rounded-full shadow-[0_0_15px_rgba(0,0,0,0.5)] transform scale-90 group-hover:scale-100 transition-transform hover:scale-110"
+                       onClick={(e) => { e.stopPropagation(); setActiveGCodeUrl(task.url || ''); }}
+                     >
+                        <Box size={28} />
                      </div>
                   </div>
                 </div>
@@ -162,6 +174,11 @@ export function PrintScreen({ cloudToken, onPrintAgain }: PrintScreenProps) {
               </div>
            </div>
         </div>
+      )}
+
+      {/* 3D GCode Viewer Modal */}
+      {activeGCodeUrl !== null && (
+        <GCodeViewer url={activeGCodeUrl} onClose={() => setActiveGCodeUrl(null)} />
       )}
     </div>
   );

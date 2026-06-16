@@ -19,9 +19,11 @@
     "@capacitor/status-bar": "^8.0.2",
     "axios": "^1.16.1",
     "bambu-mqtt-plugin": "file:bambu-mqtt-plugin",
+    "gcode-preview": "^2.18.0",
     "lucide-react": "^1.17.0",
     "react": "^19.2.6",
-    "react-dom": "^19.2.6"
+    "react-dom": "^19.2.6",
+    "three": "^0.184.0"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
