@@ -7,7 +7,6 @@ import { MessageScreen } from './MessageScreen';
 import { SettingsScreen } from './SettingsScreen';
 import { CameraScreen } from './CameraScreen';
 import { PrintScreen } from './PrintScreen';
-import { ExploreScreen } from './ExploreScreen';
 import { DarkRoomScreen } from './DarkRoomScreen';
 
 interface DashboardProps {
@@ -109,8 +108,6 @@ export function Dashboard(props: DashboardProps) {
               controlSpeed={props.controlSpeed}
               speedLvl={props.speedLvl}
             />
-          ) : props.activeTab === 'explore' ? (
-            <ExploreScreen />
           ) : props.activeTab === 'filament' ? (
             <FilamentScreen
               amsList={props.amsList}
