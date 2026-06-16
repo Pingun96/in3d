@@ -119,6 +119,14 @@ export function SettingsScreen({ printerName, ip, deviceInfo, onLogout }: Settin
                </div>
             </div>
 
+            <div className="flex-1 bg-[#2b2b2d] rounded-[12px] px-6 py-4 flex justify-between items-center cursor-pointer hover:bg-[#353535] shadow-sm">
+               <span className="text-[#e0e0e0] font-medium">Firmware</span>
+               <div className="flex items-center gap-3">
+                 <span className="text-[#a0a0a0] text-sm">{firmwareStr}</span>
+                 <svg viewBox="0 0 24 24" width="20" height="20" stroke="#888" strokeWidth="1.5" fill="none"><path d="M9 18l6-6-6-6"/></svg>
+               </div>
+            </div>
+
             <div className="flex-1 bg-[#2b2b2d] rounded-[12px] px-6 py-4 flex flex-col justify-center cursor-pointer hover:bg-[#353535] shadow-sm" onClick={handleCheckUpdate}>
                <div className="flex justify-between items-center">
                  <span className="text-[#e0e0e0] font-medium">App Version (OTA)</span>
