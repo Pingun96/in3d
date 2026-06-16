@@ -52,3 +52,20 @@ jobs:
         with:
           name: BambuScreen-Android
           path: Payload/BambuScreen-Android.apk
+
+      - name: Zip Web Assets for OTA Update
+        run: |
+          cd dist
+          zip -r ../update.zip *
+          cd ..
+
+      - name: Create GitHub Release for OTA
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v1.0.${{ github.run_number }}
+          name: Cập nhật tự động v1.0.${{ github.run_number }}
+          files: |
+            update.zip
+            Payload/BambuScreen-Android.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

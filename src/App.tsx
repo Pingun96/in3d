@@ -99,6 +99,34 @@ export default function App() {
       LocalNotifications.requestPermissions();
     } catch (e) {}
 
+    // OTA Update Check
+    const checkUpdate = async () => {
+      try {
+        const res = await fetch('https://api.github.com/repos/Pingun96/in3d/releases/latest');
+        if (!res.ok) return;
+        const data = await res.json();
+        const latestTag = data.tag_name;
+        const currentTag = localStorage.getItem('app_version') || 'v0.0.0'; // Default low version to force first update
+        
+        if (latestTag && latestTag !== currentTag) {
+          const asset = data.assets?.find((a: any) => a.name === 'update.zip');
+          if (asset) {
+            console.log(`Downloading update ${latestTag}...`);
+            const { CapacitorUpdater } = await import('@capgo/capacitor-updater');
+            const version = await CapacitorUpdater.download({
+              url: asset.browser_download_url,
+              version: latestTag
+            });
+            localStorage.setItem('app_version', latestTag);
+            await CapacitorUpdater.set(version);
+          }
+        }
+      } catch (e) {
+        console.log('OTA Update check failed', e);
+      }
+    };
+    checkUpdate();
+
     let interval: any;
     if (isConnected) {
       const fetchCover = async () => {
