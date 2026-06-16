@@ -9,6 +9,7 @@ interface FilamentScreenProps {
   handleUnloadFilament: () => void;
   machineStatus: string;
   vtTray?: any;
+  editAmsFilament: (amsId: number, trayId: number, type: string, color: string) => void;
 }
 
 export function FilamentScreen({
@@ -18,7 +19,8 @@ export function FilamentScreen({
   loadAmsFilament,
   handleLoadFilament,
   handleUnloadFilament,
-  machineStatus
+  machineStatus,
+  editAmsFilament
 }: FilamentScreenProps) {
   
   const [selectedTray, setSelectedTray] = useState<number | null>(null);

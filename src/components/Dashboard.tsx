@@ -113,6 +113,7 @@ export function Dashboard(props: DashboardProps) {
             handleLoadFilament={props.handleLoadFilament}
             handleUnloadFilament={props.handleUnloadFilament}
             machineStatus={props.machineStatus || props.printState}
+            editAmsFilament={props.editAmsFilament}
           />
         ) : props.activeTab === 'camera' ? (
           <CameraScreen />
