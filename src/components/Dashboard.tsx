@@ -55,6 +55,7 @@ interface DashboardProps {
   editAmsFilament: (amsId: number, trayId: number, type: string, color: string) => void;
   loadAmsFilament: (targetTray: number) => void;
   cloudToken?: string;
+  onPrintAgain: (task: any) => void;
 }
 
 export function Dashboard(props: DashboardProps) {
@@ -127,7 +128,7 @@ export function Dashboard(props: DashboardProps) {
         ) : props.activeTab === 'message' ? (
           <MessageScreen hmsErrors={props.hmsErrors} />
         ) : props.activeTab === 'print' ? (
-          <PrintScreen cloudToken={props.cloudToken || ''} />
+          <PrintScreen cloudToken={props.cloudToken || ''} onPrintAgain={props.onPrintAgain} />
         ) : (
           <HomeScreen {...props} machineStatus={props.machineStatus || props.printState} />
         )}

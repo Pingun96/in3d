@@ -88,6 +88,12 @@ export default function App() {
   
 
   useEffect(() => {
+    // Restore Theme
+    const savedTheme = localStorage.getItem('bambu_theme');
+    if (savedTheme === 'light') {
+      document.body.classList.add('theme-light');
+    }
+
     // Request Notification Permissions on Mount
     try {
       LocalNotifications.requestPermissions();
@@ -578,6 +584,24 @@ export default function App() {
     bambuBridge.amsChangeFilament(serial, targetTray);
   }, [serial]);
 
+  const onPrintAgain = useCallback((task: any) => {
+    // Send print_project command to start printing again
+    bambuBridge.publish(`device/${serial}/request`, {
+      print: {
+        sequence_id: '0',
+        command: 'project_file',
+        param: `Metadata/plate_1.gcode`,
+        project_id: task.profileId || '0',
+        profile_id: task.profileId || '0',
+        task_id: task.id || '0',
+        subtask_name: task.title || '',
+        file: `${task.title}.gcode`,
+        url: task.url || ''
+      }
+    });
+    alert('Đã gửi lệnh in lại xuống máy in!');
+  }, [serial]);
+
   return (
     <>
       {!isConnected ? (
@@ -655,6 +679,7 @@ export default function App() {
           editAmsFilament={editAmsFilament}
           loadAmsFilament={loadAmsFilament}
           cloudToken={cloudToken}
+          onPrintAgain={onPrintAgain}
         />
       )}
       

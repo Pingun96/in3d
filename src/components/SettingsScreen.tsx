@@ -82,9 +82,19 @@ export function SettingsScreen({ printerName, ip, deviceInfo, onLogout }: Settin
                <svg viewBox="0 0 24 24" width="32" height="32" stroke="#d0d0d0" strokeWidth="1.5" fill="none"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
                <span className="text-[#d0d0d0] text-sm font-medium">Calibration</span>
             </div>
-            <div className="flex-[1] bg-[#2b2b2d] rounded-[16px] flex flex-col items-center justify-center gap-3 cursor-pointer hover:bg-[#353535] shadow-sm">
+             <div className="flex-[1] bg-[#2b2b2d] rounded-[16px] flex flex-col items-center justify-center gap-3 cursor-pointer hover:bg-[#353535] shadow-sm">
                <svg viewBox="0 0 24 24" width="32" height="32" stroke="#d0d0d0" strokeWidth="1.5" fill="none"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
                <span className="text-[#d0d0d0] text-sm font-medium">Toolbox</span>
+            </div>
+            <div 
+              className="flex-[1] bg-[#2b2b2d] rounded-[16px] flex flex-col items-center justify-center gap-3 cursor-pointer hover:bg-[#353535] shadow-sm"
+              onClick={() => {
+                const isLight = document.body.classList.toggle('theme-light');
+                localStorage.setItem('bambu_theme', isLight ? 'light' : 'dark');
+              }}
+            >
+               <svg viewBox="0 0 24 24" width="32" height="32" stroke="#00e676" strokeWidth="1.5" fill="none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+               <span className="text-[#00e676] text-sm font-medium">Theme</span>
             </div>
             <div className="flex-[1.2] bg-[#2b2b2d] rounded-[16px] flex flex-col items-center justify-center gap-3 cursor-pointer hover:bg-[#353535] shadow-sm relative">
                <svg viewBox="0 0 24 24" width="32" height="32" stroke="#d0d0d0" strokeWidth="1.5" fill="none"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
