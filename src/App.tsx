@@ -5,6 +5,7 @@ import { HmsPopup } from './components/HmsPopup';
 import { bambuBridge } from './services/BambuBridge';
 import { BambuCloudApi, type BambuDevice } from './services/BambuCloudApi';
 import { CapacitorHttp } from '@capacitor/core';
+import { LocalNotifications } from '@capacitor/local-notifications';
 
 
 function throttle<T extends (...args: any[]) => any>(func: T, limit: number): T {
@@ -87,6 +88,11 @@ export default function App() {
   
 
   useEffect(() => {
+    // Request Notification Permissions on Mount
+    try {
+      LocalNotifications.requestPermissions();
+    } catch (e) {}
+
     let interval: any;
     if (isConnected) {
       const fetchCover = async () => {
@@ -214,6 +220,28 @@ export default function App() {
             setPrintState(prev => {
               if (prev === 'RUNNING' && printData.gcode_state === 'FINISH') {
                 setShowFinishModal(true);
+                try {
+                  LocalNotifications.schedule({
+                    notifications: [{
+                      title: "In hoàn tất!",
+                      body: `Mẫu in của bạn đã hoàn thành thành công.`,
+                      id: Date.now(),
+                      schedule: { at: new Date(Date.now() + 1000) }
+                    }]
+                  });
+                } catch (e) {}
+              }
+              if (prev === 'RUNNING' && printData.gcode_state === 'FAILED') {
+                try {
+                  LocalNotifications.schedule({
+                    notifications: [{
+                      title: "In thất bại!",
+                      body: `Máy in gặp sự cố và đã dừng lại.`,
+                      id: Date.now() + 1,
+                      schedule: { at: new Date(Date.now() + 1000) }
+                    }]
+                  });
+                } catch (e) {}
               }
               return printData.gcode_state;
             });
@@ -626,6 +654,7 @@ export default function App() {
           machineStatus={machineStatus}
           editAmsFilament={editAmsFilament}
           loadAmsFilament={loadAmsFilament}
+          cloudToken={cloudToken}
         />
       )}
       

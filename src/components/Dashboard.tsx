@@ -6,6 +6,7 @@ import { FilamentScreen } from './FilamentScreen';
 import { MessageScreen } from './MessageScreen';
 import { SettingsScreen } from './SettingsScreen';
 import { CameraScreen } from './CameraScreen';
+import { PrintScreen } from './PrintScreen';
 
 interface DashboardProps {
   printerName: string;
@@ -53,6 +54,7 @@ interface DashboardProps {
   vtTray?: any;
   editAmsFilament: (amsId: number, trayId: number, type: string, color: string) => void;
   loadAmsFilament: (targetTray: number) => void;
+  cloudToken?: string;
 }
 
 export function Dashboard(props: DashboardProps) {
@@ -123,6 +125,8 @@ export function Dashboard(props: DashboardProps) {
           />
         ) : props.activeTab === 'message' ? (
           <MessageScreen hmsErrors={props.hmsErrors} />
+        ) : props.activeTab === 'print' ? (
+          <PrintScreen cloudToken={props.cloudToken || ''} />
         ) : (
           <HomeScreen {...props} machineStatus={props.machineStatus || props.printState} />
         )}

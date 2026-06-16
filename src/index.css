@@ -12,6 +12,18 @@
     --warning: #ffd740;
     --border-color: #2c2e33;
   }
+  
+  @keyframes radar-scan {
+    0% { top: -10%; opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { top: 110%; opacity: 0; }
+  }
+
+  .animate-radar-scan {
+    animation: radar-scan 3s linear infinite;
+  }
+
   html, body {
     margin: 0;
     padding: 0;

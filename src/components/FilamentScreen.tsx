@@ -298,9 +298,20 @@ export function FilamentScreen({
                   )}
                   <div className="flex gap-2 sm:gap-3">
                      <button className="px-4 sm:px-6 py-1.5 sm:py-2.5 bg-[#404040] hover:bg-[#505050] text-[#e0e0e0] rounded-lg font-medium transition-colors text-xs sm:text-[15px]" onClick={closeEditModal}>
-                        Reset
+                        Cancel
                      </button>
-                     <button className="px-4 sm:px-6 py-1.5 sm:py-2.5 bg-[#a3ff00] hover:bg-[#b0ff22] text-black rounded-lg font-medium transition-colors shadow-lg text-xs sm:text-[15px]" onClick={closeEditModal}>
+                     <button 
+                        className="px-4 sm:px-6 py-1.5 sm:py-2.5 bg-[#a3ff00] hover:bg-[#b0ff22] text-black rounded-lg font-medium transition-colors shadow-lg text-xs sm:text-[15px] disabled:opacity-50 disabled:cursor-not-allowed" 
+                        disabled={isBambuFilament}
+                        onClick={() => {
+                           if (!isBambuFilament && editingTrayId !== null) {
+                              const amsId = editingTrayId === 254 ? 255 : 0; // usually 0 for AMS, 255 for VT
+                              const trayId = editingTrayId === 254 ? 254 : editingTrayId;
+                              editAmsFilament(amsId, trayId, `${editBrand} ${editType}`, editColor);
+                           }
+                           closeEditModal();
+                        }}
+                     >
                         Confirm
                      </button>
                   </div>
