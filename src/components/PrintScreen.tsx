@@ -13,7 +13,6 @@ export function PrintScreen({ cloudToken, onPrintAgain }: PrintScreenProps) {
   const [loading, setLoading] = useState(true);
   const [activeVideoUrl, setActiveVideoUrl] = useState<string | null>(null);
   const [activeGCodeUrl, setActiveGCodeUrl] = useState<string | null>(null);
-  const [activeGCodeLocal, setActiveGCodeLocal] = useState<{filename: string, content: string} | null>(null);
 
   const fetchTasks = async () => {
     setLoading(true);
@@ -84,17 +83,15 @@ export function PrintScreen({ cloudToken, onPrintAgain }: PrintScreenProps) {
                 <span className="hidden sm:inline font-medium text-sm">In File Của Bạn</span>
                 <input 
                   type="file" 
-                  accept=".gcode"
+                  accept=".gcode,.3mf"
                   className="hidden" 
                   onChange={(e) => {
                     const file = e.target.files?.[0];
                     if (!file) return;
-                    const reader = new FileReader();
-                    reader.onload = (ev) => {
-                      setActiveGCodeUrl(null);
-                      setActiveGCodeLocal({ filename: file.name, content: ev.target?.result as string });
-                    };
-                    reader.readAsText(file);
+                    
+                    // Show alert immediately instead of trying to parse huge files which causes white screen freeze
+                    alert(`Đã chọn file: ${file.name}\nTính năng Upload FTPS đang được phát triển. Bạn sẽ sớm có thể in trực tiếp từ điện thoại!`);
+                    
                     // Reset value so we can select same file again if needed
                     e.target.value = '';
                   }}
@@ -203,17 +200,6 @@ export function PrintScreen({ cloudToken, onPrintAgain }: PrintScreenProps) {
       {/* 3D GCode Viewer Modal */}
       {activeGCodeUrl !== null && (
         <GCodeViewer url={activeGCodeUrl} onClose={() => setActiveGCodeUrl(null)} />
-      )}
-      {activeGCodeLocal !== null && (
-        <GCodeViewer 
-          gcodeText={activeGCodeLocal.content} 
-          filename={activeGCodeLocal.filename}
-          onClose={() => setActiveGCodeLocal(null)} 
-          onPrintLocal={() => {
-            alert('Tính năng Upload FTPS đang được phát triển. Tạm thời chỉ hỗ trợ xem trước G-Code cục bộ.');
-            setActiveGCodeLocal(null);
-          }}
-        />
       )}
     </div>
   );
