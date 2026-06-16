@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 interface SettingsScreenProps {
   printerName: string;
@@ -8,6 +8,58 @@ interface SettingsScreenProps {
 }
 
 export function SettingsScreen({ printerName, ip, deviceInfo, onLogout }: SettingsScreenProps) {
+  const [appVersion, setAppVersion] = useState('');
+  const [isCheckingUpdate, setIsCheckingUpdate] = useState(false);
+  const [updateMsg, setUpdateMsg] = useState('');
+
+  useEffect(() => {
+    setAppVersion(localStorage.getItem('app_version') || 'v1.0.0 (Gốc)');
+  }, []);
+
+  const handleCheckUpdate = async () => {
+    if (isCheckingUpdate) return;
+    setIsCheckingUpdate(true);
+    setUpdateMsg('Đang kiểm tra...');
+    try {
+      const res = await fetch('https://api.github.com/repos/Pingun96/in3d/releases/latest');
+      if (!res.ok) {
+        setUpdateMsg('Lỗi kết nối Github.');
+        setIsCheckingUpdate(false);
+        return;
+      }
+      const data = await res.json();
+      const latestTag = data.tag_name;
+      const currentTag = localStorage.getItem('app_version') || 'v0.0.0';
+      
+      if (latestTag && latestTag !== currentTag && latestTag !== 'v0.0.0') {
+        const asset = data.assets?.find((a: any) => a.name === 'update.zip');
+        if (asset) {
+          setUpdateMsg(`Đang tải ${latestTag}... Không thoát app!`);
+          const { CapacitorUpdater } = await import('@capgo/capacitor-updater');
+          const version = await CapacitorUpdater.download({
+            url: asset.browser_download_url,
+            version: latestTag
+          });
+          localStorage.setItem('app_version', latestTag);
+          setUpdateMsg('Đang nạp lại giao diện...');
+          setTimeout(async () => {
+             await CapacitorUpdater.set(version);
+          }, 1000);
+          return; // Don't set isCheckingUpdate to false because app will reload
+        } else {
+          setUpdateMsg('Không tìm thấy file cập nhật.');
+        }
+      } else {
+        setUpdateMsg('Bạn đang ở phiên bản mới nhất!');
+      }
+    } catch (e) {
+      setUpdateMsg('Kiểm tra cập nhật thất bại.');
+    }
+    setTimeout(() => {
+      setIsCheckingUpdate(false);
+      setUpdateMsg('');
+    }, 3000);
+  };
   // Format SD card string
   let sdcardString = '0GB / 0GB';
   if (deviceInfo?.sdcard) {
@@ -67,12 +119,19 @@ export function SettingsScreen({ printerName, ip, deviceInfo, onLogout }: Settin
                </div>
             </div>
 
-            <div className="flex-1 bg-[#2b2b2d] rounded-[12px] px-6 py-4 flex justify-between items-center cursor-pointer hover:bg-[#353535] shadow-sm">
-               <span className="text-[#e0e0e0] font-medium">Firmware</span>
-               <div className="flex items-center gap-3">
-                 <span className="text-[#a0a0a0] text-sm">{firmwareStr}</span>
-                 <svg viewBox="0 0 24 24" width="20" height="20" stroke="#888" strokeWidth="1.5" fill="none"><path d="M9 18l6-6-6-6"/></svg>
+            <div className="flex-1 bg-[#2b2b2d] rounded-[12px] px-6 py-4 flex flex-col justify-center cursor-pointer hover:bg-[#353535] shadow-sm" onClick={handleCheckUpdate}>
+               <div className="flex justify-between items-center">
+                 <span className="text-[#e0e0e0] font-medium">App Version (OTA)</span>
+                 <div className="flex items-center gap-3">
+                   <span className="text-[#00e676] text-sm">{appVersion}</span>
+                   {isCheckingUpdate ? (
+                     <svg viewBox="0 0 24 24" width="20" height="20" stroke="#00e676" strokeWidth="2" fill="none" className="animate-spin"><path d="M21 12a9 9 0 1 1-6.219-8.56"></path></svg>
+                   ) : (
+                     <svg viewBox="0 0 24 24" width="20" height="20" stroke="#00e676" strokeWidth="1.5" fill="none"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 1 0 2.1-5.9L3 8"/><path d="M3 2v6h6"/><path d="M21 12a9 9 0 1 0-2.1 5.9L21 16"/></svg>
+                   )}
+                 </div>
                </div>
+               {updateMsg && <div className="text-[#00e676] text-xs mt-2 text-right">{updateMsg}</div>}
             </div>
          </div>
 
