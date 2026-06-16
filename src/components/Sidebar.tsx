@@ -80,14 +80,6 @@ export function Sidebar({ activeTab, setActiveTab, hmsErrors, printState }: Side
     );
   };
 
-  const InventoryIcon = () => (
-    <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
-      <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
-      <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
-    </svg>
-  );
-
   const ExploreIcon = () => (
     <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
@@ -101,7 +93,6 @@ export function Sidebar({ activeTab, setActiveTab, hmsErrors, printState }: Side
     { id: 'explore', icon: <ExploreIcon /> },
     { id: 'control', icon: <ControlIcon /> },
     { id: 'filament', icon: <FilamentIcon /> },
-    { id: 'inventory', icon: <InventoryIcon /> },
     { id: 'settings', icon: <SettingsIcon /> },
     { id: 'message', icon: <MessageIcon /> },
   ];
@@ -162,23 +153,6 @@ export function Sidebar({ activeTab, setActiveTab, hmsErrors, printState }: Side
             {tab.icon}
           </div>
         ))}
-      </div>
-      
-      {/* PIP Camera Button */}
-      <div className="mt-auto mb-4 w-full flex items-center justify-center">
-        <div 
-          onClick={() => {
-            const ev = new CustomEvent('toggle-pip-camera');
-            window.dispatchEvent(ev);
-          }}
-          className="w-10 h-10 sm:w-12 sm:h-12 xl:w-14 xl:h-14 flex items-center justify-center rounded-xl cursor-pointer transition-colors text-[#888] hover:text-[#e0e0e0] hover:bg-[#333]"
-          title="Bật/Tắt Camera Nổi (PIP)"
-        >
-          <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-            <rect x="12" y="14" width="7" height="5" rx="1" ry="1"></rect>
-          </svg>
-        </div>
       </div>
       
       {/* Power Button */}

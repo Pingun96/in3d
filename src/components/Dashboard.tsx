@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Sidebar } from './Sidebar';
 import { HomeScreen } from './HomeScreen';
 import { ControlScreen } from './ControlScreen';
@@ -7,8 +7,6 @@ import { MessageScreen } from './MessageScreen';
 import { SettingsScreen } from './SettingsScreen';
 import { CameraScreen } from './CameraScreen';
 import { PrintScreen } from './PrintScreen';
-import { InventoryScreen } from './InventoryScreen';
-import { DraggableCamera } from './DraggableCamera';
 import { ExploreScreen } from './ExploreScreen';
 import { DarkRoomScreen } from './DarkRoomScreen';
 
@@ -63,14 +61,7 @@ interface DashboardProps {
 }
 
 export function Dashboard(props: DashboardProps) {
-  const [showPip, setShowPip] = React.useState(false);
   const [showDarkRoom, setShowDarkRoom] = React.useState(false);
-
-  React.useEffect(() => {
-    const handleTogglePip = () => setShowPip(prev => !prev);
-    window.addEventListener('toggle-pip-camera', handleTogglePip);
-    return () => window.removeEventListener('toggle-pip-camera', handleTogglePip);
-  }, []);
 
   return (
     <>
@@ -131,8 +122,6 @@ export function Dashboard(props: DashboardProps) {
               machineStatus={props.machineStatus || props.printState}
               editAmsFilament={props.editAmsFilament}
             />
-          ) : props.activeTab === 'inventory' ? (
-            <InventoryScreen />
           ) : props.activeTab === 'camera' ? (
             <CameraScreen />
           ) : props.activeTab === 'settings' ? (
@@ -150,15 +139,6 @@ export function Dashboard(props: DashboardProps) {
             <HomeScreen {...props} machineStatus={props.machineStatus || props.printState} onOpenDarkRoom={() => setShowDarkRoom(true)} />
           )}
         </div>
-        
-        {/* Draggable PIP Camera */}
-        {showPip && (
-          <DraggableCamera 
-            onClose={() => setShowPip(false)} 
-            isAiActive={props.isAiActive}
-            streamUrl="http://600bk.cameraddns.net:8080/video"
-          />
-        )}
       </div>
 
       {/* Dark Room Fullscreen Overlay */}
