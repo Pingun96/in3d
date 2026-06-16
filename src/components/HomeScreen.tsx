@@ -1,5 +1,5 @@
 import React from 'react';
-import { Wifi, Box, FolderOpen, ChevronRight } from 'lucide-react';
+import { Wifi, Box, FolderOpen, ChevronRight, Moon } from 'lucide-react';
 
 interface HomeScreenProps {
   printerName: string;
@@ -22,6 +22,7 @@ interface HomeScreenProps {
   setActiveTab?: (tab: string) => void;
   speedLvl?: number;
   deviceInfo?: any;
+  onOpenDarkRoom?: () => void;
 }
 
 export function HomeScreen({
@@ -39,7 +40,8 @@ export function HomeScreen({
   amsList,
   setActiveTab,
   speedLvl,
-  deviceInfo
+  deviceInfo,
+  onOpenDarkRoom
 }: HomeScreenProps) {
 
 
@@ -88,6 +90,17 @@ export function HomeScreen({
   return (
     <div className="flex flex-col w-full h-full bg-[#111] overflow-hidden relative">
       
+      {/* Dark Room Button */}
+      {onOpenDarkRoom && (
+        <button 
+          onClick={onOpenDarkRoom}
+          className="absolute top-4 right-4 z-50 p-2 bg-[#2a2a2b] border border-[#3a3a3c] rounded-full text-[#a0a0a0] hover:text-white hover:bg-[#353535] transition-colors"
+          title="Chế độ Dark Room (Canh đêm)"
+        >
+          <Moon size={20} />
+        </button>
+      )}
+
       {/* Top Area: Printer Image and Welcome Text OR Print Progress */}
       <div className="w-full flex-1 flex items-center px-4 sm:px-8 md:px-16 mt-2 sm:mt-4">
         {isPrinting ? (
