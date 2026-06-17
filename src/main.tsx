@@ -5,6 +5,7 @@ import { ScreenOrientation } from '@capacitor/screen-orientation'
 import './index.css'
 import App from './App.tsx'
 import { NotificationProvider } from './context/NotificationContext'
+import { CapacitorUpdater } from '@capgo/capacitor-updater';
 
 
 createRoot(document.getElementById('root')!).render(
@@ -14,3 +15,6 @@ createRoot(document.getElementById('root')!).render(
     </NotificationProvider>
   </StrictMode>,
 )
+
+// Notify Capgo that the app has successfully loaded to prevent rollback
+CapacitorUpdater.notifyAppReady().catch(console.error);
