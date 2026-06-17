@@ -90,6 +90,7 @@ export default function App() {
 
   const [autoOffEnabled, setAutoOffEnabled] = useState(() => localStorage.getItem('bambu_auto_off') === 'true');
   const [autoTurnOffPending, setAutoTurnOffPending] = useState(false);
+  const [autoOffCountdown, setAutoOffCountdown] = useState<number | null>(null);
 
   // Auto Turn Off Logic
   useEffect(() => {
@@ -100,11 +101,22 @@ export default function App() {
   }, [printState]);
 
   useEffect(() => {
-    const checkAndTurnOff = async () => {
-      // Check if feature is enabled, a print just finished, and temp dropped below 70
-      if (autoOffEnabled && autoTurnOffPending && printState === 'FINISH' && nozzleTemp < 70) {
-        setAutoTurnOffPending(false); // Reset pending so we don't trigger again
-        
+    // Check if feature is enabled, a print just finished, and temp dropped below 70
+    if (autoOffEnabled && autoTurnOffPending && printState === 'FINISH' && nozzleTemp < 70) {
+      setAutoTurnOffPending(false); // Reset pending so we don't trigger again
+      setAutoOffCountdown(30); // Start 30s countdown
+    }
+  }, [autoOffEnabled, autoTurnOffPending, printState, nozzleTemp]);
+
+  useEffect(() => {
+    if (autoOffCountdown === null) return;
+
+    if (autoOffCountdown > 0) {
+      const timer = setTimeout(() => setAutoOffCountdown(autoOffCountdown - 1), 1000);
+      return () => clearTimeout(timer);
+    } else {
+      // Countdown reached 0 -> Turn off
+      const turnOffPrinterHA = async () => {
         // Hardcoded HA Configuration for turn off
         const haUrl = 'http://600bk.cameraddns.net:8124';
         const haToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJlOTg0ZTYzM2FiMTM0ZDdkYjYyODQ0ODA1NzY5OTEwNyIsImlhdCI6MTc4MDg5MjI3NCwiZXhwIjoyMDk2MjUyMjc0fQ.iu76GuCzF4WrZKbT3phHFHkXgSctuXToZBmkA0B8tQE';
@@ -117,7 +129,7 @@ export default function App() {
                 notifications: [
                   {
                     title: "Tự động tắt máy",
-                    body: "Máy in đã in xong và hạ nhiệt. Đang tiến hành ngắt nguồn.",
+                    body: "Máy in đã in xong và hạ nhiệt. Đã ngắt nguồn.",
                     id: 9999,
                     schedule: { at: new Date(Date.now() + 1000) }
                   }
@@ -139,10 +151,12 @@ export default function App() {
         } catch (e) {
           console.error("Failed to auto turn off printer", e);
         }
-      }
-    };
-    checkAndTurnOff();
-  }, [autoOffEnabled, autoTurnOffPending, printState, nozzleTemp]);
+      };
+      
+      turnOffPrinterHA();
+      setAutoOffCountdown(null);
+    }
+  }, [autoOffCountdown]);
 
   useEffect(() => {
     const checkAppUpdate = async () => {
@@ -770,23 +784,56 @@ export default function App() {
       )}
 
       {showFinishModal && (
-        <div className="fixed inset-0 bg-black/80 z-[100] flex items-center justify-center p-4">
-          <div className="bg-[#1e1e1e] border border-[#333] rounded-2xl w-full max-w-sm flex flex-col items-center p-6 shadow-2xl relative overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-[#00e676] to-[#00b259]"></div>
-            <div className="w-20 h-20 rounded-full bg-[#00e676]/20 flex items-center justify-center mb-4 mt-2">
-              <svg viewBox="0 0 24 24" width="40" height="40" stroke="#00e676" strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                <polyline points="22 4 12 14.01 9 11.01"></polyline>
-              </svg>
-            </div>
-            <h2 className="text-white text-2xl font-bold mb-2">In hoàn tất!</h2>
-            <p className="text-[#a0a0a0] text-center mb-6">Mẫu in "{printSubtask || 'Không xác định'}" đã hoàn thành thành công.</p>
-            <button 
-              className="w-full bg-[#00e676] text-black font-semibold text-lg py-3 rounded-xl hover:bg-[#00c853] transition-colors"
-              onClick={() => setShowFinishModal(false)}
-            >
-              OK, Đã hiểu
-            </button>
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="bg-[#1e1e1e] border border-[#3a3a3c] rounded-2xl p-6 shadow-2xl flex flex-col items-center justify-center max-w-sm w-full relative overflow-hidden">
+             <div className="absolute top-0 left-0 w-full h-1 bg-[#2a2a2b]">
+               <div className="h-full bg-[#00e676] animate-pulse" style={{ width: '100%' }}></div>
+             </div>
+             
+             <div className="w-20 h-20 bg-[#00e676]/10 rounded-full flex items-center justify-center mb-4 text-[#00e676]">
+                <svg viewBox="0 0 24 24" width="40" height="40" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+             </div>
+             
+             <h2 className="text-xl font-bold text-white mb-2 text-center">In Thành Công!</h2>
+             <p className="text-[#a0a0a0] text-center mb-6 text-sm">Quá trình in đã hoàn tất. Bạn có thể kiểm tra sản phẩm trên bàn in.</p>
+             
+             <button 
+               className="w-full bg-[#00e676] hover:bg-[#00c853] text-black font-medium py-3 rounded-xl transition-colors"
+               onClick={() => setShowFinishModal(false)}
+             >
+               Đóng
+             </button>
+          </div>
+        </div>
+      )}
+
+      {/* Auto Turn Off Countdown Modal */}
+      {autoOffCountdown !== null && (
+        <div className="fixed inset-0 z-[110] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+          <div className="bg-[#1e1e1e] border border-[#ff5252] rounded-2xl p-6 shadow-[0_0_50px_rgba(255,82,82,0.15)] flex flex-col items-center justify-center max-w-sm w-full relative overflow-hidden text-center">
+             
+             {/* Progress Bar (counts down) */}
+             <div className="absolute top-0 left-0 w-full h-1.5 bg-[#2a2a2b]">
+               <div className="h-full bg-[#ff5252] transition-all duration-1000 ease-linear" style={{ width: `${(autoOffCountdown / 30) * 100}%` }}></div>
+             </div>
+             
+             <div className="w-24 h-24 mb-4 relative flex items-center justify-center">
+               <svg className="absolute inset-0 w-full h-full text-[#ff5252]" viewBox="0 0 100 100">
+                  <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" strokeWidth="4" strokeOpacity="0.2" />
+                  <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" strokeWidth="4" strokeDasharray="283" strokeDashoffset={283 - (283 * (autoOffCountdown / 30))} strokeLinecap="round" className="transition-all duration-1000 ease-linear transform -rotate-90 origin-center" />
+               </svg>
+               <span className="text-4xl font-bold text-[#ff5252]">{autoOffCountdown}</span>
+             </div>
+             
+             <h2 className="text-xl font-bold text-white mb-2">Đang ngắt nguồn...</h2>
+             <p className="text-[#a0a0a0] mb-6 text-sm">Máy in đã nguội an toàn (Dưới 70°C). Ổ cắm thông minh sẽ tự động tắt để tiết kiệm điện.</p>
+             
+             <button 
+               className="w-full bg-[#2a2a2b] border border-[#ff5252]/50 hover:bg-[#ff5252]/20 text-[#ff5252] font-medium py-3 rounded-xl transition-colors"
+               onClick={() => setAutoOffCountdown(null)}
+             >
+               Hủy Tự Động Tắt
+             </button>
           </div>
         </div>
       )}
