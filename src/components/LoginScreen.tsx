@@ -13,7 +13,7 @@ interface LoginScreenProps {
   setCloudDevices: (v: BambuDevice[]) => void;
   isLoggingIn: boolean;
   isConnecting: boolean;
-  connectionError: string;
+  // connectionError?: string;
   handleCloudLogin: (e: React.FormEvent) => void;
   handleConnectCloudDevice: (device: BambuDevice) => void;
   ip: string;
@@ -112,9 +112,7 @@ export function LoginScreen(props: LoginScreenProps) {
                   </div>
                 )}
                 
-                {props.connectionError && (
-                  <p className="text-xs text-[#ff5252] flex items-center gap-1"><AlertTriangle size={14} /> {props.connectionError}</p>
-                )}
+                {/* connection error mapped to toast */}
                 
                 <button type="submit" disabled={props.isLoggingIn} className="w-full x1c-btn-primary py-2.5 sm:py-3 mt-2 sm:mt-4">
                   {props.isLoggingIn ? <RefreshCw className="animate-spin mx-auto" size={20} /> : 'Login to Cloud'}
@@ -149,9 +147,7 @@ export function LoginScreen(props: LoginScreenProps) {
                   ))}
                 </div>
 
-                {props.connectionError && (
-                  <p className="text-xs text-[#ff5252] flex items-center gap-1"><AlertTriangle size={14} /> {props.connectionError}</p>
-                )}
+                {/* connection error mapped to toast */}
                 
                 <button onClick={() => props.setCloudDevices([])} className="mt-4 text-sm text-[#a0a0a0] hover:text-white transition-colors text-center w-full">
                   Logout
@@ -185,9 +181,7 @@ export function LoginScreen(props: LoginScreenProps) {
               className="x1c-input"
             />
             
-            {props.connectionError && (
-              <p className="text-xs text-[#ff5252] flex items-center gap-1"><AlertTriangle size={14} /> {props.connectionError}</p>
-            )}
+            {/* connection error mapped to toast */}
             
             <button type="submit" disabled={props.isConnecting} className="w-full x1c-btn py-2.5 sm:py-3 mt-2 sm:mt-4 bg-[#2c2e33] hover:bg-[#3f424a] text-white">
               {props.isConnecting ? <RefreshCw className="animate-spin mx-auto" size={20} /> : 'Connect Local'}

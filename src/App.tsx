@@ -6,7 +6,7 @@ import { bambuBridge } from './services/BambuBridge';
 import { BambuCloudApi, type BambuDevice } from './services/BambuCloudApi';
 import { CapacitorHttp } from '@capacitor/core';
 import { LocalNotifications } from '@capacitor/local-notifications';
-
+import { useNotification } from './context/NotificationContext';
 
 function throttle<T extends (...args: any[]) => any>(func: T, limit: number): T {
   let inThrottle: boolean;
@@ -35,7 +35,7 @@ let lastBlobUrl = '';
 export default function App() {
   const [isConnected, setIsConnected] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
-  const [connectionError, setConnectionError] = useState('');
+  // connectionError removed in favor of showToast
   
   const [ip, setIp] = useState(() => localStorage.getItem('bambu_ip') || '');
   const [accessCode, setAccessCode] = useState(() => localStorage.getItem('bambu_code') || '');
@@ -224,7 +224,7 @@ export default function App() {
           
           if (printData.gcode_state !== undefined) {
             setPrintState(prev => {
-              if (prev === 'RUNNING' && printData.gcode_state === 'FINISH') {
+              if (prev !== 'FINISH' && printData.gcode_state === 'FINISH') {
                 setShowFinishModal(true);
                 try {
                   LocalNotifications.schedule({
@@ -237,7 +237,7 @@ export default function App() {
                   });
                 } catch (e) {}
               }
-              if (prev === 'RUNNING' && printData.gcode_state === 'FAILED') {
+              if (prev !== 'FAILED' && printData.gcode_state === 'FAILED') {
                 try {
                   LocalNotifications.schedule({
                     notifications: [{
@@ -328,11 +328,11 @@ export default function App() {
   const handleCloudLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!cloudEmail || !cloudPassword) {
-      setConnectionError('Vui lòng nhập Email và Password');
+      showToast('Vui lòng nhập Email và Password', 'error');
       return;
     }
     setIsLoggingIn(true);
-    setConnectionError('');
+    // setConnectionError('');
     try {
       const res = await BambuCloudApi.login(cloudEmail, cloudPassword, verifyCode);
       setCloudToken(res.token);
@@ -346,9 +346,9 @@ export default function App() {
     } catch (err: unknown) {
       if ((err as Error).message === 'REQUIRE_2FA') {
         setIsRequire2FA(true);
-        setConnectionError('Hệ thống yêu cầu mã xác thực đã được gửi về email của bạn.');
+        showToast('Hệ thống yêu cầu mã xác thực đã được gửi về email của bạn.', 'info');
       } else {
-        setConnectionError((err as Error).message);
+        showToast((err as Error).message, 'error');
       }
     } finally {
       setIsLoggingIn(false);
@@ -357,17 +357,17 @@ export default function App() {
 
   const handleSendVerifyCode = async () => {
     try {
-      setConnectionError('');
+      // setConnectionError('');
       await BambuCloudApi.sendVerifyCode(cloudEmail);
-      setConnectionError('Mã xác thực đã được gửi lại vào email của bạn.');
+      showToast('Mã xác thực đã được gửi lại vào email của bạn.', 'success');
     } catch (err: unknown) {
-      setConnectionError((err as Error).message);
+      showToast((err as Error).message, 'error');
     }
   };
 
   const handleConnectCloudDevice = async (device: BambuDevice) => {
     setIsConnecting(true);
-    setConnectionError('');
+    // setConnectionError('');
     try {
       setSerial(device.dev_id);
       localStorage.setItem('bambu_serial', device.dev_id);
@@ -406,7 +406,7 @@ export default function App() {
           { id: '3', empty: true }
         ] }]);
       } else {
-        setConnectionError(errorMsg);
+        showToast(errorMsg, 'error');
         setIsConnected(false);
       }
       setIsConnecting(false);
@@ -443,11 +443,11 @@ export default function App() {
   const handleConnectLocal = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     if (!ip || !accessCode || !serial) {
-      setConnectionError('Vui lòng điền đầy đủ IP, LAN Access Code và Serial Number');
+      showToast('Vui lòng điền đầy đủ IP, LAN Access Code và Serial Number', 'error');
       return;
     }
     setIsConnecting(true);
-    setConnectionError('');
+    // setConnectionError('');
     try {
       localStorage.setItem('bambu_ip', ip);
       localStorage.setItem('bambu_code', accessCode);
@@ -486,7 +486,7 @@ export default function App() {
           { id: '3', empty: true }
         ] }]);
       } else {
-        setConnectionError(errorMsg);
+        showToast(errorMsg, 'error');
         setIsConnected(false);
       }
       setIsConnecting(false);
@@ -584,6 +584,8 @@ export default function App() {
     bambuBridge.amsChangeFilament(serial, targetTray);
   }, [serial]);
 
+  const { showToast } = useNotification();
+
   const onPrintAgain = useCallback((task: any) => {
     // Send print_project command to start printing again
     bambuBridge.publish(`device/${serial}/request`, {
@@ -599,8 +601,8 @@ export default function App() {
         url: task.url || ''
       }
     });
-    alert('Đã gửi lệnh in lại xuống máy in!');
-  }, [serial]);
+    showToast('Đã gửi lệnh in lại xuống máy in!', 'success');
+  }, [serial, showToast]);
 
   return (
     <>
@@ -616,7 +618,6 @@ export default function App() {
           setCloudDevices={setCloudDevices}
           isLoggingIn={isLoggingIn}
           isConnecting={isConnecting}
-          connectionError={connectionError}
           handleCloudLogin={handleCloudLogin}
           handleConnectCloudDevice={handleConnectCloudDevice}
           ip={ip}

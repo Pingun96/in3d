@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { BambuCloudApi } from '../services/BambuCloudApi';
 import { Printer, Clock, File, RefreshCw, PlayCircle, BarChart3, Weight, CheckCircle2, Box } from 'lucide-react';
 import { GCodeViewer } from './GCodeViewer';
+import { useNotification } from '../context/NotificationContext';
 
 interface PrintScreenProps {
   cloudToken: string;
@@ -13,6 +14,7 @@ export function PrintScreen({ cloudToken, onPrintAgain }: PrintScreenProps) {
   const [loading, setLoading] = useState(true);
   const [activeVideoUrl, setActiveVideoUrl] = useState<string | null>(null);
   const [activeGCodeUrl, setActiveGCodeUrl] = useState<string | null>(null);
+  const { showDialog } = useNotification();
 
   const fetchTasks = async () => {
     setLoading(true);
@@ -89,8 +91,11 @@ export function PrintScreen({ cloudToken, onPrintAgain }: PrintScreenProps) {
                     const file = e.target.files?.[0];
                     if (!file) return;
                     
-                    // Show alert immediately instead of trying to parse huge files which causes white screen freeze
-                    alert(`Đã chọn file: ${file.name}\nTính năng Upload FTPS đang được phát triển. Bạn sẽ sớm có thể in trực tiếp từ điện thoại!`);
+                    showDialog({
+                      title: 'Thông báo',
+                      message: `Đã chọn file: ${file.name}\nTính năng Upload FTPS đang được phát triển. Bạn sẽ sớm có thể in trực tiếp từ điện thoại!`,
+                      hideCancel: true
+                    });
                     
                     // Reset value so we can select same file again if needed
                     e.target.value = '';
@@ -152,7 +157,7 @@ export function PrintScreen({ cloudToken, onPrintAgain }: PrintScreenProps) {
                   <div className="text-xs text-[#a0a0a0] mb-3 mt-auto flex justify-between">
                      <span>{new Date(task.startTime).toLocaleDateString()}</span>
                      <span className={task.status === 4 ? "text-[#00e676]" : "text-[#ff9800]"}>
-                        {task.status === 4 ? 'Success' : 'Failed'}
+                        {task.status === 4 ? 'Hoàn thành' : 'Đã hủy/Lỗi'}
                      </span>
                   </div>
                   <button 

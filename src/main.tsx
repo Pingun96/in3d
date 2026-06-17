@@ -4,10 +4,13 @@ import { StatusBar } from '@capacitor/status-bar'
 import { ScreenOrientation } from '@capacitor/screen-orientation'
 import './index.css'
 import App from './App.tsx'
+import { NotificationProvider } from './context/NotificationContext'
 
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <App />
+    <NotificationProvider>
+      <App />
+    </NotificationProvider>
   </StrictMode>,
 )

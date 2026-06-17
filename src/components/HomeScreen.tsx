@@ -187,11 +187,11 @@ export function HomeScreen({
         
         {/* 1. Print Files (Wide Block) */}
         <div 
-          className={`${boxClass} flex-[1.6] justify-center items-center gap-1 sm:gap-3 px-2 sm:px-4 relative overflow-hidden group`}
+          className={`${boxClass} flex-1 justify-center items-center gap-1 sm:gap-3 px-2 sm:px-4 relative overflow-hidden group`}
           onClick={() => setActiveTab?.('print')}
         >
-          <img src="/benchy_transparent.png" alt="Benchy" className="h-[40px] sm:h-[60px] object-contain drop-shadow-[0_5px_10px_rgba(0,0,0,0.5)] group-hover:scale-105 transition-transform duration-300" />
-          <span className="text-[#e0e0e0] text-xs sm:text-sm font-medium z-10">Print Files</span>
+          <img src="/benchy_transparent.png" alt="Benchy" className="h-[30px] sm:h-[45px] object-contain drop-shadow-[0_5px_10px_rgba(0,0,0,0.5)] group-hover:scale-105 transition-transform duration-300" />
+          <span className="text-[#e0e0e0] text-[10px] sm:text-sm font-medium z-10">Print Files</span>
         </div>
 
         {/* 2. Nozzle/Bed Temp */}

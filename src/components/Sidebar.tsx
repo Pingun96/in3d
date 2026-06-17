@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNotification } from '../context/NotificationContext';
 
 interface SidebarProps {
   activeTab: string;
@@ -9,6 +10,7 @@ interface SidebarProps {
 
 export function Sidebar({ activeTab, setActiveTab, hmsErrors, printState }: SidebarProps) {
   const [isPowerOn, setIsPowerOn] = useState<boolean | null>(null);
+  const { showToast, showDialog } = useNotification();
 
   const haUrl = 'http://600bk.cameraddns.net:8124';
   const haToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJlOTg0ZTYzM2FiMTM0ZDdkYjYyODQ0ODA1NzY5OTEwNyIsImlhdCI6MTc4MDg5MjI3NCwiZXhwIjoyMDk2MjUyMjc0fQ.iu76GuCzF4WrZKbT3phHFHkXgSctuXToZBmkA0B8tQE';
@@ -98,33 +100,50 @@ export function Sidebar({ activeTab, setActiveTab, hmsErrors, printState }: Side
   const togglePrinterPower = async () => {
     // Prevent turning off the printer while it's printing
     if (isPowerOn && (printState === 'RUNNING' || printState === 'PRINTING' || printState === 'PAUSE')) {
-      alert('Máy in đang hoạt động. Cúp điện đột ngột có thể làm kẹt nhựa và hỏng máy in!');
+      showDialog({
+        title: 'Cảnh báo nguy hiểm',
+        message: 'Máy in đang hoạt động. Cúp điện đột ngột có thể làm kẹt nhựa và hỏng máy in!',
+        hideCancel: true
+      });
       return;
     }
 
-    // Hardcoded HA Configuration
-    const haUrl = 'http://600bk.cameraddns.net:8124';
-    const haToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJlOTg0ZTYzM2FiMTM0ZDdkYjYyODQ0ODA1NzY5OTEwNyIsImlhdCI6MTc4MDg5MjI3NCwiZXhwIjoyMDk2MjUyMjc0fQ.iu76GuCzF4WrZKbT3phHFHkXgSctuXToZBmkA0B8tQE';
-    const haEntityId = 'switch.may_in_3d_socket_1';
+    const performToggle = async () => {
+      // Hardcoded HA Configuration
+      const haUrl = 'http://600bk.cameraddns.net:8124';
+      const haToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJlOTg0ZTYzM2FiMTM0ZDdkYjYyODQ0ODA1NzY5OTEwNyIsImlhdCI6MTc4MDg5MjI3NCwiZXhwIjoyMDk2MjUyMjc0fQ.iu76GuCzF4WrZKbT3phHFHkXgSctuXToZBmkA0B8tQE';
+      const haEntityId = 'switch.may_in_3d_socket_1';
 
-    try {
-      const response = await fetch(`${haUrl}/api/services/switch/toggle`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${haToken}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ entity_id: haEntityId })
-      });
-      if (!response.ok) {
-        alert('Failed to toggle power. Check your HA configuration.');
-      } else {
-        // Optimistically switch state
-        setIsPowerOn(prev => prev === null ? null : !prev);
-        setTimeout(fetchPowerState, 1500); // Poll again shortly after
+      try {
+        const response = await fetch(`${haUrl}/api/services/switch/toggle`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${haToken}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ entity_id: haEntityId })
+        });
+        if (!response.ok) {
+          showToast('Không thể bật/tắt nguồn. Kiểm tra HA.', 'error');
+        } else {
+          // Optimistically switch state
+          setIsPowerOn(prev => prev === null ? null : !prev);
+          showToast(`Đã ${isPowerOn ? 'tắt' : 'bật'} nguồn thành công.`, 'success');
+          setTimeout(fetchPowerState, 1500); // Poll again shortly after
+        }
+      } catch (e: any) {
+        showToast('Lỗi kết nối tới Home Assistant', 'error');
       }
-    } catch (e: any) {
-      alert('Error toggling power: ' + e.message);
+    };
+
+    if (isPowerOn) {
+      showDialog({
+        title: 'Xác nhận tắt máy',
+        message: 'Bạn có chắc chắn muốn tắt máy in không?',
+        onConfirm: performToggle
+      });
+    } else {
+      performToggle();
     }
   };
 
