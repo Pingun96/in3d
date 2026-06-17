@@ -88,6 +88,62 @@ export default function App() {
   
   const [hasAppUpdate, setHasAppUpdate] = useState(false);
 
+  const [autoOffEnabled, setAutoOffEnabled] = useState(() => localStorage.getItem('bambu_auto_off') === 'true');
+  const [autoTurnOffPending, setAutoTurnOffPending] = useState(false);
+
+  // Auto Turn Off Logic
+  useEffect(() => {
+    // If the printer starts printing, we set pending to true
+    if (printState === 'PRINTING' || printState === 'RUNNING') {
+      setAutoTurnOffPending(true);
+    }
+  }, [printState]);
+
+  useEffect(() => {
+    const checkAndTurnOff = async () => {
+      // Check if feature is enabled, a print just finished, and temp dropped below 70
+      if (autoOffEnabled && autoTurnOffPending && printState === 'FINISH' && nozzleTemp < 70) {
+        setAutoTurnOffPending(false); // Reset pending so we don't trigger again
+        
+        // Hardcoded HA Configuration for turn off
+        const haUrl = 'http://600bk.cameraddns.net:8124';
+        const haToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJlOTg0ZTYzM2FiMTM0ZDdkYjYyODQ0ODA1NzY5OTEwNyIsImlhdCI6MTc4MDg5MjI3NCwiZXhwIjoyMDk2MjUyMjc0fQ.iu76GuCzF4WrZKbT3phHFHkXgSctuXToZBmkA0B8tQE';
+        const haEntityId = 'switch.may_in_3d_socket_1';
+        
+        try {
+          // Fire local notification
+          try {
+             LocalNotifications.schedule({
+                notifications: [
+                  {
+                    title: "Tự động tắt máy",
+                    body: "Máy in đã in xong và hạ nhiệt. Đang tiến hành ngắt nguồn.",
+                    id: 9999,
+                    schedule: { at: new Date(Date.now() + 1000) }
+                  }
+                ]
+             });
+          } catch(e) {}
+
+          const response = await fetch(`${haUrl}/api/services/switch/turn_off`, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${haToken}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ entity_id: haEntityId })
+          });
+          if (response.ok) {
+             console.log("Printer auto-turned off successfully.");
+          }
+        } catch (e) {
+          console.error("Failed to auto turn off printer", e);
+        }
+      }
+    };
+    checkAndTurnOff();
+  }, [autoOffEnabled, autoTurnOffPending, printState, nozzleTemp]);
+
   useEffect(() => {
     const checkAppUpdate = async () => {
       try {
@@ -703,6 +759,8 @@ export default function App() {
           cloudToken={cloudToken}
           onPrintAgain={onPrintAgain}
           hasAppUpdate={hasAppUpdate}
+          autoOffEnabled={autoOffEnabled}
+          setAutoOffEnabled={setAutoOffEnabled}
         />
       )}
       

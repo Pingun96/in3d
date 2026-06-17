@@ -58,6 +58,8 @@ interface DashboardProps {
   cloudToken?: string;
   onPrintAgain: (task: any) => void;
   hasAppUpdate?: boolean;
+  autoOffEnabled?: boolean;
+  setAutoOffEnabled?: (val: boolean) => void;
 }
 
 export function Dashboard(props: DashboardProps) {
@@ -128,6 +130,8 @@ export function Dashboard(props: DashboardProps) {
               ip={props.deviceInfo?.ip || ''}
               deviceInfo={props.deviceInfo}
               onLogout={props.onDisconnect}
+              autoOffEnabled={props.autoOffEnabled}
+              setAutoOffEnabled={props.setAutoOffEnabled}
             />
           ) : props.activeTab === 'message' ? (
             <MessageScreen hmsErrors={props.hmsErrors} />

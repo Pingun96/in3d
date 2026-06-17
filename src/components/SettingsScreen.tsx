@@ -5,9 +5,11 @@ interface SettingsScreenProps {
   ip: string;
   deviceInfo: any;
   onLogout?: () => void;
+  autoOffEnabled?: boolean;
+  setAutoOffEnabled?: (val: boolean) => void;
 }
 
-export function SettingsScreen({ printerName, ip, deviceInfo, onLogout }: SettingsScreenProps) {
+export function SettingsScreen({ printerName, ip, deviceInfo, onLogout, autoOffEnabled, setAutoOffEnabled }: SettingsScreenProps) {
   const [appVersion, setAppVersion] = useState('');
   const [isCheckingUpdate, setIsCheckingUpdate] = useState(false);
   const [updateMsg, setUpdateMsg] = useState('');
@@ -149,6 +151,26 @@ export function SettingsScreen({ printerName, ip, deviceInfo, onLogout }: Settin
                  </div>
                </div>
                {updateMsg && <div className="text-[#00e676] text-xs mt-2 text-right">{updateMsg}</div>}
+            </div>
+
+            {/* Automation: Auto Turn Off */}
+            <div className="flex-1 bg-[#2b2b2d] rounded-[12px] px-6 py-4 flex justify-between items-center shadow-sm">
+               <div className="flex flex-col">
+                 <span className="text-[#e0e0e0] font-medium">Tự động tắt máy (HA)</span>
+                 <span className="text-[#888] text-xs mt-0.5">Sau khi in xong và nhiệt độ &lt; 70°C</span>
+               </div>
+               <div 
+                 className={`w-12 h-6 rounded-full p-1 cursor-pointer transition-colors duration-300 ease-in-out ${autoOffEnabled ? 'bg-[#00e676]' : 'bg-[#444]'}`}
+                 onClick={() => {
+                   if (setAutoOffEnabled) {
+                     const newVal = !autoOffEnabled;
+                     setAutoOffEnabled(newVal);
+                     localStorage.setItem('bambu_auto_off', newVal.toString());
+                   }
+                 }}
+               >
+                 <div className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300 ease-in-out ${autoOffEnabled ? 'translate-x-6' : 'translate-x-0'}`}></div>
+               </div>
             </div>
          </div>
 
