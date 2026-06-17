@@ -116,16 +116,21 @@ export function FilamentScreen({
   const openEditModal = (trayId: number) => {
     setEditingTrayId(trayId);
     
-    // Set initial values based on read-only mock data for AMS vs Ext
-    const isAms = trayId !== 254;
-    if (isAms) {
-       setEditBrand("Bambu Lab");
-       setEditType("PLA Matte");
-       setEditColor("#00aaff");
+    let trayData = null;
+    if (trayId === 254) {
+      trayData = vtTray;
     } else {
-       setEditBrand("Generic");
-       setEditType("PLA Basic");
-       setEditColor("#a67c00");
+      trayData = displayTrays.find(t => parseInt(t.id) === trayId);
+    }
+    
+    if (trayData && !trayData.empty) {
+      setEditBrand(trayData.tray_sub_brands || "Generic");
+      setEditType(trayData.tray_type || "PLA Basic");
+      setEditColor(trayData.tray_color ? `#${trayData.tray_color.substring(0,6)}` : "#a67c00");
+    } else {
+      setEditBrand("Generic");
+      setEditType("PLA Basic");
+      setEditColor("#a67c00");
     }
     closeTrayModal();
   };
@@ -191,8 +196,7 @@ export function FilamentScreen({
 
   const renderEditModal = () => {
     if (editingTrayId === null) return null;
-    const isAms = editingTrayId !== 254;
-    const isBambuFilament = isAms;
+    const isBambuFilament = false; // Always allow editing
 
     return (
       <div className="absolute inset-0 bg-[#222] z-50 flex flex-col">
