@@ -77,11 +77,15 @@ export function SettingsScreen({ printerName, ip, deviceInfo, onLogout }: Settin
   }
 
   // Format Firmware string
-  let firmwareStr = 'Unknown';
-  if (deviceInfo?.module_version) {
-    firmwareStr = deviceInfo.module_version;
-  } else if (deviceInfo?.ota?.ota_new_version_number) {
-    firmwareStr = deviceInfo.ota.ota_new_version_number;
+  let firmwareStr = deviceInfo?.module_version || 'Unknown';
+  let hasFirmwareUpdate = false;
+  let newFirmwareVersion = '';
+
+  if (deviceInfo?.ota && deviceInfo.ota.ota_new_version_number) {
+    if (deviceInfo.ota.ota_new_version_number !== firmwareStr) {
+      hasFirmwareUpdate = true;
+      newFirmwareVersion = deviceInfo.ota.ota_new_version_number;
+    }
   }
 
   return (
@@ -122,6 +126,11 @@ export function SettingsScreen({ printerName, ip, deviceInfo, onLogout }: Settin
             <div className="flex-1 bg-[#2b2b2d] rounded-[12px] px-6 py-4 flex justify-between items-center cursor-pointer hover:bg-[#353535] shadow-sm">
                <span className="text-[#e0e0e0] font-medium">Firmware</span>
                <div className="flex items-center gap-3">
+                 {hasFirmwareUpdate && (
+                   <span className="text-[#00e676] text-xs border border-[#00e676]/30 bg-[#00e676]/10 px-2 py-0.5 rounded-full font-bold">
+                     Cập nhật: {newFirmwareVersion}
+                   </span>
+                 )}
                  <span className="text-[#a0a0a0] text-sm">{firmwareStr}</span>
                  <svg viewBox="0 0 24 24" width="20" height="20" stroke="#888" strokeWidth="1.5" fill="none"><path d="M9 18l6-6-6-6"/></svg>
                </div>
