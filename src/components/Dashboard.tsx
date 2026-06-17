@@ -57,6 +57,7 @@ interface DashboardProps {
   loadAmsFilament: (targetTray: number) => void;
   cloudToken?: string;
   onPrintAgain: (task: any) => void;
+  hasAppUpdate?: boolean;
 }
 
 export function Dashboard(props: DashboardProps) {
@@ -65,7 +66,7 @@ export function Dashboard(props: DashboardProps) {
   return (
     <>
       <div className="flex w-full h-full bg-[#0f1011] overflow-hidden text-white select-none">
-        <Sidebar activeTab={props.activeTab} setActiveTab={props.setActiveTab} hmsErrors={props.hmsErrors} printState={props.printState} />
+        <Sidebar activeTab={props.activeTab} setActiveTab={props.setActiveTab} hmsErrors={props.hmsErrors} printState={props.printState} deviceInfo={props.deviceInfo} hasAppUpdate={props.hasAppUpdate} />
         
         <div className="flex-1 h-full overflow-hidden relative flex flex-col">
           {props.activeTab === 'home' || props.activeTab === 'dashboard' ? (

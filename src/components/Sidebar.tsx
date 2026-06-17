@@ -6,11 +6,21 @@ interface SidebarProps {
   setActiveTab: (tab: string) => void;
   hmsErrors?: any[];
   printState?: string;
+  deviceInfo?: any;
+  hasAppUpdate?: boolean;
 }
 
-export function Sidebar({ activeTab, setActiveTab, hmsErrors, printState }: SidebarProps) {
+export function Sidebar({ activeTab, setActiveTab, hmsErrors, printState, deviceInfo, hasAppUpdate }: SidebarProps) {
   const [isPowerOn, setIsPowerOn] = useState<boolean | null>(null);
   const { showToast, showDialog } = useNotification();
+
+  let hasFirmwareUpdate = false;
+  if (deviceInfo?.ota && deviceInfo.ota.ota_new_version_number) {
+    const fw = deviceInfo.module_version || '';
+    if (deviceInfo.ota.ota_new_version_number !== fw) {
+      hasFirmwareUpdate = true;
+    }
+  }
 
   const haUrl = 'http://600bk.cameraddns.net:8124';
   const haToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJlOTg0ZTYzM2FiMTM0ZDdkYjYyODQ0ODA1NzY5OTEwNyIsImlhdCI6MTc4MDg5MjI3NCwiZXhwIjoyMDk2MjUyMjc0fQ.iu76GuCzF4WrZKbT3phHFHkXgSctuXToZBmkA0B8tQE';
@@ -62,9 +72,14 @@ export function Sidebar({ activeTab, setActiveTab, hmsErrors, printState }: Side
   );
 
   const SettingsIcon = () => (
-    <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
-      <path d="M12 2l8.66 5v10L12 22l-8.66-5V7L12 2zM12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8z" />
-    </svg>
+    <div className="relative">
+      <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
+        <path d="M12 2l8.66 5v10L12 22l-8.66-5V7L12 2zM12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8z" />
+      </svg>
+      {(hasFirmwareUpdate || hasAppUpdate) && (
+        <div className={`absolute -top-1 -right-1 w-3 h-3 rounded-full border-2 border-[#1e1e1e] animate-pulse ${hasAppUpdate ? 'bg-[#ff5252]' : 'bg-[#00e676]'}`}></div>
+      )}
+    </div>
   );
 
   const MessageIcon = () => {

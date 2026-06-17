@@ -86,6 +86,27 @@ export default function App() {
   const [riskScore, setRiskScore] = useState(0);
   const [isAlarmTriggered, setIsAlarmTriggered] = useState(false);
   
+  const [hasAppUpdate, setHasAppUpdate] = useState(false);
+
+  useEffect(() => {
+    const checkAppUpdate = async () => {
+      try {
+        const res = await fetch('https://api.github.com/repos/Pingun96/in3d/releases/latest');
+        if (res.ok) {
+          const data = await res.json();
+          const latestTag = data.tag_name;
+          const currentTag = localStorage.getItem('app_version') || 'v0.0.0';
+          if (latestTag && latestTag !== currentTag && latestTag !== 'v0.0.0') {
+            setHasAppUpdate(true);
+          }
+        }
+      } catch (e) {
+        // Ignore errors
+      }
+    };
+    checkAppUpdate();
+  }, []);
+  
 
   useEffect(() => {
     // Restore Theme
@@ -681,6 +702,7 @@ export default function App() {
           loadAmsFilament={loadAmsFilament}
           cloudToken={cloudToken}
           onPrintAgain={onPrintAgain}
+          hasAppUpdate={hasAppUpdate}
         />
       )}
       
