@@ -116,45 +116,45 @@ export function PrintScreen({ cloudToken, onPrintAgain }: PrintScreenProps) {
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#00e676]"></div>
           </div>
         ) : tasks.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 pb-20">
+          <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 gap-2 sm:gap-4 pb-20">
             {tasks.map((task) => (
               <div key={task.id} className="bg-[#2a2a2b] rounded-xl overflow-hidden border border-[#3a3a3c] shadow-lg flex flex-col group hover:border-[#555] transition-colors relative">
-                <div className="h-40 w-full relative bg-black/50">
+                <div className="h-24 sm:h-32 w-full relative bg-black/50">
                   {task.cover ? (
                     <img src={task.cover} alt={task.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
-                      <File className="text-[#555]" size={48} />
+                      <File className="text-[#555]" size={32} />
                     </div>
                   )}
-                  <div className="absolute top-2 right-2 flex gap-2">
-                    <div className="bg-black/60 backdrop-blur-sm px-2 py-1 rounded text-xs border border-white/10 flex items-center gap-1">
-                       <Clock size={12} />
+                  <div className="absolute top-1 right-1 sm:top-2 sm:right-2 flex gap-1 sm:gap-2">
+                    <div className="bg-black/60 backdrop-blur-sm px-1.5 py-0.5 sm:px-2 sm:py-1 rounded text-[9px] sm:text-xs border border-white/10 flex items-center gap-1">
+                       <Clock size={10} />
                        <span>{Math.floor((task.costTime || 0) / 60)} min</span>
                     </div>
                   </div>
                   
                   {/* Nút Xem Timelapse ảo */}
                   <div 
-                    className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer gap-4"
+                    className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer gap-2 sm:gap-4"
                   >
                      <div 
-                       className="bg-[#00e676] text-black p-3 rounded-full shadow-[0_0_15px_rgba(0,230,118,0.5)] transform scale-90 group-hover:scale-100 transition-transform hover:scale-110"
+                       className="bg-[#00e676] text-black p-1.5 sm:p-3 rounded-full shadow-[0_0_15px_rgba(0,230,118,0.5)] transform scale-90 group-hover:scale-100 transition-transform hover:scale-110"
                        onClick={(e) => { e.stopPropagation(); setActiveVideoUrl(task.videoUrl || 'demo_video'); }}
                      >
-                        <PlayCircle size={28} />
+                        <PlayCircle size={18} className="sm:w-[28px] sm:h-[28px]" />
                      </div>
                      <div 
-                       className="bg-[#2a2a2b] border border-[#555] text-white p-3 rounded-full shadow-[0_0_15px_rgba(0,0,0,0.5)] transform scale-90 group-hover:scale-100 transition-transform hover:scale-110"
+                       className="bg-[#2a2a2b] border border-[#555] text-white p-1.5 sm:p-3 rounded-full shadow-[0_0_15px_rgba(0,0,0,0.5)] transform scale-90 group-hover:scale-100 transition-transform hover:scale-110"
                        onClick={(e) => { e.stopPropagation(); setActiveGCodeUrl(task.url || ''); }}
                      >
-                        <Box size={28} />
+                        <Box size={18} className="sm:w-[28px] sm:h-[28px]" />
                      </div>
                   </div>
                 </div>
-                <div className="p-4 flex flex-col flex-1 z-10 bg-[#2a2a2b]">
-                  <h3 className="font-medium text-[15px] text-[#f0f0f0] line-clamp-2 mb-1">{task.title || 'Unknown Model'}</h3>
-                  <div className="text-xs text-[#a0a0a0] mb-3 mt-auto flex justify-between">
+                <div className="p-2 sm:p-4 flex flex-col flex-1 z-10 bg-[#2a2a2b]">
+                  <h3 className="font-medium text-[11px] sm:text-[15px] text-[#f0f0f0] line-clamp-2 mb-1 leading-snug">{task.title || 'Unknown Model'}</h3>
+                  <div className="text-[9px] sm:text-xs text-[#a0a0a0] mb-2 sm:mb-3 mt-auto flex justify-between">
                      <span>{new Date(task.startTime).toLocaleDateString()}</span>
                      <span className={task.status === 4 ? "text-[#00e676]" : "text-[#ff9800]"}>
                         {task.status === 4 ? 'Hoàn thành' : 'Đã hủy/Lỗi'}
@@ -162,7 +162,7 @@ export function PrintScreen({ cloudToken, onPrintAgain }: PrintScreenProps) {
                   </div>
                   <button 
                     onClick={() => onPrintAgain(task)}
-                    className="w-full bg-[#00e676]/10 hover:bg-[#00e676]/20 text-[#00e676] py-2 rounded-lg text-sm font-medium transition-colors border border-[#00e676]/20"
+                    className="w-full bg-[#00e676]/10 hover:bg-[#00e676]/20 text-[#00e676] py-1.5 sm:py-2 rounded-lg text-[10px] sm:text-sm font-medium transition-colors border border-[#00e676]/20"
                   >
                     Print Again
                   </button>
