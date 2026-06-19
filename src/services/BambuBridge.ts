@@ -347,6 +347,35 @@ class BambuBridge {
     };
     return this.publish(topic, payload);
   }
+
+  /**
+   * Kích hoạt in từ Cloud (Bambu S3) qua MQTT
+   */
+  async startCloudPrint(serial: string, url: string, md5: string, filename: string, taskId: string = "0"): Promise<void> {
+    const topic = `device/${serial}/request`;
+    const payload = {
+      print: {
+        sequence_id: Math.floor(Math.random() * 10000).toString(),
+        command: 'project_file',
+        param: 'Metadata/plate_1.gcode',
+        project_id: '0',
+        profile_id: '0',
+        task_id: taskId,
+        subtask_id: '0',
+        subtask_name: filename,
+        url: url,
+        md5: md5,
+        timelapse: true,
+        bed_type: 'auto',
+        bed_levelling: true,
+        flow_cali: false,
+        vibration_cali: false,
+        layer_inspect: false,
+        use_ams: false
+      }
+    };
+    return this.publish(topic, payload);
+  }
 }
 
 export const bambuBridge = new BambuBridge();

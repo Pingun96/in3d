@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BambuCloudApi } from '../services/BambuCloudApi';
+import { bambuBridge } from '../services/BambuBridge';
 import { Printer, Clock, File, RefreshCw, PlayCircle, BarChart3, Weight, CheckCircle2, Box } from 'lucide-react';
 import { GCodeViewer } from './GCodeViewer';
 import { useNotification } from '../context/NotificationContext';
@@ -142,7 +143,7 @@ export function PrintScreen({ cloudToken, serial, onPrintAgain }: PrintScreenPro
 
                       // 5. Create Print Task
                       showDialog({ title: 'Đang khởi động', message: 'Đang gửi lệnh in tới máy in...', hideCancel: true });
-                      await BambuCloudApi.createPrintTask(
+                                            const taskResponse = await BambuCloudApi.createPrintTask(
                         cloudToken,
                         file.name,
                         serial,
@@ -151,6 +152,13 @@ export function PrintScreen({ cloudToken, serial, onPrintAgain }: PrintScreenPro
                         file.size,
                         md5Hash
                       );
+
+                      // 6. Send MQTT Command to start printing
+                      showDialog({ title: 'Đang bắt đầu in', message: 'Đang đánh thức máy in...', hideCancel: true });
+                      const taskId = taskResponse?.task_id || "0";
+                      // Strip query string from S3 URL for MQTT payload to prevent length/parse issues on printer
+                      const cleanFileUrl = fileUrl.split('?')[0];
+                      await bambuBridge.startCloudPrint(serial, cleanFileUrl, md5Hash, file.name, taskId);
 
                       showDialog({ title: 'Thành công', message: 'Đã gửi lệnh in Cloud thành công! Máy in sẽ sớm bắt đầu.', hideCancel: true });
                       setTimeout(() => fetchTasks(), 3000);
