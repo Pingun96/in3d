@@ -156,9 +156,7 @@ export function PrintScreen({ cloudToken, serial, onPrintAgain }: PrintScreenPro
                       // 6. Send MQTT Command to start printing
                       showDialog({ title: 'Đang bắt đầu in', message: 'Đang đánh thức máy in...', hideCancel: true });
                       const taskId = taskResponse?.task_id || "0";
-                      // Strip query string from S3 URL for MQTT payload to prevent length/parse issues on printer
-                      const cleanFileUrl = fileUrl.split('?')[0];
-                      await bambuBridge.startCloudPrint(serial, cleanFileUrl, md5Hash, file.name, taskId);
+                      await bambuBridge.startCloudPrint(serial, fileUrl, md5Hash, file.name, taskId);
 
                       showDialog({ title: 'Thành công', message: 'Đã gửi lệnh in Cloud thành công! Máy in sẽ sớm bắt đầu.', hideCancel: true });
                       setTimeout(() => fetchTasks(), 3000);
