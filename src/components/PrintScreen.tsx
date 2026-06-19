@@ -131,13 +131,13 @@ export function PrintScreen({ cloudToken, serial, onPrintAgain }: PrintScreenPro
 
                       // 3. Upload File to S3
                       showDialog({ title: 'Đang tải lên', message: 'Đang đẩy file lên S3...', hideCancel: true });
-                      await BambuCloudApi.uploadToS3(fileUrl, file, 'application/octet-stream', (percent) => {
+                      await BambuCloudApi.uploadToS3(fileUrl, arrayBuffer, (percent) => {
                         setUploadProgress(Math.round(percent));
                       });
 
                       // 4. Upload Size File to S3 (Required by Bambu)
                       if (sizeUrl) {
-                        await BambuCloudApi.uploadToS3(sizeUrl, file.size.toString(), 'text/plain');
+                        await BambuCloudApi.uploadToS3(sizeUrl, file.size.toString());
                       }
 
                       // 5. Create Print Task

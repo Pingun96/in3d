@@ -217,11 +217,12 @@ export class BambuCloudApi {
   /**
    * Upload file trực tiếp lên S3 bằng Fetch API (để tránh giới hạn Base64 của CapacitorHttp)
    */
-  static async uploadToS3(url: string, data: File | string, contentType: string, onProgress?: (percent: number) => void): Promise<void> {
+  static async uploadToS3(url: string, data: File | string | ArrayBuffer, onProgress?: (percent: number) => void): Promise<void> {
     return new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
       xhr.open('PUT', url, true);
-      xhr.setRequestHeader('Content-Type', contentType);
+      
+      // Không set Content-Type vì S3 presigned URL của Bambu không có chữ ký Content-Type
       
       xhr.upload.onprogress = (e) => {
         if (e.lengthComputable && onProgress) {
