@@ -118,9 +118,9 @@ export function PrintScreen({ cloudToken, serial, onPrintAgain }: PrintScreenPro
                       let fileUrl = '';
                       let sizeUrl = '';
                       
-                      if (uploadCreds && uploadCreds.url && Array.isArray(uploadCreds.url)) {
-                        const fileObj = uploadCreds.url.find((u: any) => u.name === file.name);
-                        const sizeObj = uploadCreds.url.find((u: any) => u.name === `${file.name}.size`);
+                      if (uploadCreds && uploadCreds.urls && Array.isArray(uploadCreds.urls)) {
+                        const fileObj = uploadCreds.urls.find((u: any) => u.type === 'filename');
+                        const sizeObj = uploadCreds.urls.find((u: any) => u.type === 'size');
                         if (fileObj) fileUrl = fileObj.url;
                         if (sizeObj) sizeUrl = sizeObj.url;
                       }
