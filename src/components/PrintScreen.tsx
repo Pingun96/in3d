@@ -126,7 +126,7 @@ export function PrintScreen({ cloudToken, serial, onPrintAgain }: PrintScreenPro
                       }
 
                       if (!fileUrl) {
-                        throw new Error('Không lấy được URL upload từ Cloud');
+                        throw new Error(`Lỗi: Không lấy được URL upload. Phản hồi từ server: ${JSON.stringify(uploadCreds)}`);
                       }
 
                       // 3. Upload File to S3

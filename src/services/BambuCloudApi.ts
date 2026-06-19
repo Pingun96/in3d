@@ -191,18 +191,15 @@ export class BambuCloudApi {
    */
   static async requestUploadUrl(token: string, filename: string, fileSize: number): Promise<any> {
     try {
-      const response = await CapacitorHttp.post({
+      const response = await CapacitorHttp.get({
         url: `${BASE_URL_IOT}/api/user/upload`,
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
-        data: {
-          file_name: filename,
-          file_size: fileSize,
-          // Some versions use filename and size
+        params: {
           filename: filename,
-          size: fileSize
+          size: fileSize.toString()
         }
       });
       
