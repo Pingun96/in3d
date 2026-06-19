@@ -726,6 +726,7 @@ export default function App() {
         />
       ) : (
         <Dashboard
+          serial={serial}
           printerName={cloudDevices.find(d => d.dev_id === serial)?.name || 'Bambu Printer'}
           printState={printState}
           printProgress={printProgress}

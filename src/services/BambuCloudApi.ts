@@ -185,4 +185,112 @@ export class BambuCloudApi {
       return [];
     }
   }
+
+  /**
+   * Yêu cầu URLs S3 để upload file
+   */
+  static async requestUploadUrl(token: string, filename: string, fileSize: number): Promise<any> {
+    try {
+      const response = await CapacitorHttp.post({
+        url: `${BASE_URL_IOT}/api/user/upload`,
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        data: {
+          file_name: filename,
+          file_size: fileSize,
+          // Some versions use filename and size
+          filename: filename,
+          size: fileSize
+        }
+      });
+      
+      let resData = response.data;
+      if (typeof resData === 'string') {
+        try { resData = JSON.parse(resData); } catch(e) {}
+      }
+      return resData;
+    } catch (err: any) {
+      console.error('BambuCloudApi requestUploadUrl error:', err);
+      throw new Error(err.message || 'Lỗi xin cấp phép Upload', { cause: err });
+    }
+  }
+
+  /**
+   * Upload file trực tiếp lên S3 bằng Fetch API (để tránh giới hạn Base64 của CapacitorHttp)
+   */
+  static async uploadToS3(url: string, data: File | string, contentType: string, onProgress?: (percent: number) => void): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open('PUT', url, true);
+      xhr.setRequestHeader('Content-Type', contentType);
+      
+      xhr.upload.onprogress = (e) => {
+        if (e.lengthComputable && onProgress) {
+          const percentComplete = (e.loaded / e.total) * 100;
+          onProgress(percentComplete);
+        }
+      };
+
+      xhr.onload = () => {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          resolve();
+        } else {
+          reject(new Error(`S3 Upload Failed with status ${xhr.status}: ${xhr.statusText}`));
+        }
+      };
+
+      xhr.onerror = () => reject(new Error('Lỗi mạng khi upload lên S3'));
+      xhr.send(data);
+    });
+  }
+
+  /**
+   * Tạo lệnh in qua Cloud API
+   */
+  static async createPrintTask(
+    token: string, 
+    title: string,
+    deviceId: string, 
+    fileName: string, 
+    fileUrl: string, 
+    fileSize: number, 
+    fileMd5: string,
+    plateIndex: number = 1
+  ): Promise<any> {
+    try {
+      const payload = {
+        title: title,
+        deviceId: deviceId,
+        fileId: "", 
+        fileName: fileName,
+        fileSize: fileSize,
+        fileUrl: fileUrl,
+        md5: fileMd5,
+        plateIndex: plateIndex,
+        projectId: "0",
+        profileId: "0",
+        taskType: 1 // 1 is usually cloud print task
+      };
+
+      const response = await CapacitorHttp.post({
+        url: `${BASE_URL_USER}/my/tasks/create`,
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        data: payload
+      });
+
+      let resData = response.data;
+      if (typeof resData === 'string') {
+        try { resData = JSON.parse(resData); } catch(e) {}
+      }
+      return resData;
+    } catch (err: any) {
+      console.error('BambuCloudApi createPrintTask error:', err);
+      throw new Error(err.message || 'Lỗi khi ra lệnh in qua Cloud', { cause: err });
+    }
+  }
 }

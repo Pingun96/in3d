@@ -10,6 +10,7 @@ import { PrintScreen } from './PrintScreen';
 import { DarkRoomScreen } from './DarkRoomScreen';
 
 interface DashboardProps {
+  serial: string;
   printerName: string;
   printState: string;
   printProgress: number;
@@ -136,7 +137,7 @@ export function Dashboard(props: DashboardProps) {
           ) : props.activeTab === 'message' ? (
             <MessageScreen hmsErrors={props.hmsErrors} />
           ) : props.activeTab === 'print' ? (
-            <PrintScreen cloudToken={props.cloudToken || ''} onPrintAgain={props.onPrintAgain} />
+            <PrintScreen cloudToken={props.cloudToken || ''} serial={props.serial || ''} onPrintAgain={props.onPrintAgain} />
           ) : (
             <HomeScreen {...props} machineStatus={props.machineStatus || props.printState} onOpenDarkRoom={() => setShowDarkRoom(true)} />
           )}

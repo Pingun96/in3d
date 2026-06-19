@@ -3,17 +3,21 @@ import { BambuCloudApi } from '../services/BambuCloudApi';
 import { Printer, Clock, File, RefreshCw, PlayCircle, BarChart3, Weight, CheckCircle2, Box } from 'lucide-react';
 import { GCodeViewer } from './GCodeViewer';
 import { useNotification } from '../context/NotificationContext';
+import SparkMD5 from 'spark-md5';
 
 interface PrintScreenProps {
   cloudToken: string;
+  serial?: string;
   onPrintAgain: (task: any) => void;
 }
 
-export function PrintScreen({ cloudToken, onPrintAgain }: PrintScreenProps) {
+export function PrintScreen({ cloudToken, serial, onPrintAgain }: PrintScreenProps) {
   const [tasks, setTasks] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeVideoUrl, setActiveVideoUrl] = useState<string | null>(null);
   const [activeGCodeUrl, setActiveGCodeUrl] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const { showDialog } = useNotification();
 
   const fetchTasks = async () => {
@@ -87,18 +91,77 @@ export function PrintScreen({ cloudToken, onPrintAgain }: PrintScreenProps) {
                   type="file" 
                   accept=".gcode,.3mf"
                   className="hidden" 
-                  onChange={(e) => {
+                                    onChange={async (e) => {
                     const file = e.target.files?.[0];
                     if (!file) return;
                     
-                    showDialog({
-                      title: 'Thông báo',
-                      message: `Đã chọn file: ${file.name}\nTính năng Upload FTPS đang được phát triển. Bạn sẽ sớm có thể in trực tiếp từ điện thoại!`,
-                      hideCancel: true
-                    });
-                    
-                    // Reset value so we can select same file again if needed
-                    e.target.value = '';
+                    if (!cloudToken || !serial) {
+                      showDialog({ title: 'Lỗi', message: 'Vui lòng kết nối Cloud và chọn máy in trước khi upload.', hideCancel: true });
+                      return;
+                    }
+
+                    try {
+                      setUploading(true);
+                      setUploadProgress(0);
+                      
+                      // 1. Calculate MD5
+                      showDialog({ title: 'Đang xử lý', message: 'Đang tính toán mã MD5 của file...', hideCancel: true });
+                      const arrayBuffer = await file.arrayBuffer();
+                      const spark = new SparkMD5.ArrayBuffer();
+                      spark.append(arrayBuffer);
+                      const md5Hash = spark.end();
+                      
+                      // 2. Request Upload URL
+                      showDialog({ title: 'Đang kết nối', message: 'Xin cấp phép upload từ Bambu Cloud...', hideCancel: true });
+                      const uploadCreds = await BambuCloudApi.requestUploadUrl(cloudToken, file.name, file.size);
+                      
+                      let fileUrl = '';
+                      let sizeUrl = '';
+                      
+                      if (uploadCreds && uploadCreds.url && Array.isArray(uploadCreds.url)) {
+                        const fileObj = uploadCreds.url.find((u: any) => u.name === file.name);
+                        const sizeObj = uploadCreds.url.find((u: any) => u.name === `${file.name}.size`);
+                        if (fileObj) fileUrl = fileObj.url;
+                        if (sizeObj) sizeUrl = sizeObj.url;
+                      }
+
+                      if (!fileUrl) {
+                        throw new Error('Không lấy được URL upload từ Cloud');
+                      }
+
+                      // 3. Upload File to S3
+                      showDialog({ title: 'Đang tải lên', message: 'Đang đẩy file lên S3...', hideCancel: true });
+                      await BambuCloudApi.uploadToS3(fileUrl, file, 'application/octet-stream', (percent) => {
+                        setUploadProgress(Math.round(percent));
+                      });
+
+                      // 4. Upload Size File to S3 (Required by Bambu)
+                      if (sizeUrl) {
+                        await BambuCloudApi.uploadToS3(sizeUrl, file.size.toString(), 'text/plain');
+                      }
+
+                      // 5. Create Print Task
+                      showDialog({ title: 'Đang khởi động', message: 'Đang gửi lệnh in tới máy in...', hideCancel: true });
+                      await BambuCloudApi.createPrintTask(
+                        cloudToken,
+                        file.name,
+                        serial,
+                        file.name,
+                        fileUrl, // Sometimes bambu expects s3 url without query params, but full url works mostly
+                        file.size,
+                        md5Hash
+                      );
+
+                      showDialog({ title: 'Thành công', message: 'Đã gửi lệnh in Cloud thành công! Máy in sẽ sớm bắt đầu.', hideCancel: true });
+                      setTimeout(() => fetchTasks(), 3000);
+                    } catch (err: any) {
+                      console.error('Upload error:', err);
+                      showDialog({ title: 'Lỗi Upload', message: err.message || 'Có lỗi xảy ra khi upload', hideCancel: true });
+                    } finally {
+                      setUploading(false);
+                      setUploadProgress(0);
+                      e.target.value = '';
+                    }
                   }}
                 />
              </label>
