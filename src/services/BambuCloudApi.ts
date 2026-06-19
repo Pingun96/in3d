@@ -215,6 +215,40 @@ export class BambuCloudApi {
   }
 
   /**
+   * Kích hoạt in từ Cloud qua API chính thức (thay vì MQTT proxy)
+   */
+  static async startPrintJob(token: string, deviceId: string, filename: string, url: string, taskId?: string): Promise<any> {
+    try {
+      const data: any = {
+        device_id: deviceId,
+        file_name: filename,
+        file_url: url
+      };
+      if (taskId && taskId !== "0") {
+        data.task_id = taskId;
+        data.file_id = taskId;
+      }
+      
+      const response = await CapacitorHttp.post({
+        url: `${BASE_URL_IOT}/api/user/print`,
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        data: data
+      });
+      
+      if (response.status !== 200 || (response.data && response.data.code && response.data.code !== 0 && response.data.code !== 200)) {
+        throw new Error(`Lỗi Start Print API: ${JSON.stringify(response.data)}`);
+      }
+      return response.data;
+    } catch (err: any) {
+      console.error('BambuCloudApi startPrintJob error:', err);
+      throw new Error(err.message || 'Lỗi gửi lệnh in Cloud API', { cause: err });
+    }
+  }
+
+  /**
    * Upload file trực tiếp lên S3 bằng Fetch API (để tránh giới hạn Base64 của CapacitorHttp)
    */
   static async uploadToS3(url: string, data: File | string | ArrayBuffer, onProgress?: (percent: number) => void): Promise<void> {
