@@ -15,6 +15,7 @@ let package = Package(
         .package(name: "CapacitorLocalNotifications", path: "..\..\..\node_modules\@capacitor\local-notifications"),
         .package(name: "CapacitorScreenOrientation", path: "..\..\..\node_modules\@capacitor\screen-orientation"),
         .package(name: "CapacitorStatusBar", path: "..\..\..\node_modules\@capacitor\status-bar"),
+        .package(name: "CapgoCapacitorUpdater", path: "..\..\..\node_modules\@capgo\capacitor-updater"),
         .package(name: "BambuMqttPlugin", path: "..\..\..\bambu-mqtt-plugin")
     ],
     targets: [
@@ -26,6 +27,7 @@ let package = Package(
                 .product(name: "CapacitorLocalNotifications", package: "CapacitorLocalNotifications"),
                 .product(name: "CapacitorScreenOrientation", package: "CapacitorScreenOrientation"),
                 .product(name: "CapacitorStatusBar", package: "CapacitorStatusBar"),
+                .product(name: "CapgoCapacitorUpdater", package: "CapgoCapacitorUpdater"),
                 .product(name: "BambuMqttPlugin", package: "BambuMqttPlugin")
             ]
         )
