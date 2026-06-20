@@ -141,26 +141,17 @@ export function PrintScreen({ cloudToken, serial, onPrintAgain }: PrintScreenPro
                         await BambuCloudApi.uploadToS3(sizeUrl, file.size.toString());
                       }
 
-                      // 5. Create Print Task
-                      showDialog({ title: 'Đang khởi động', message: 'Đang gửi lệnh in tới máy in...', hideCancel: true });
-                                            const taskResponse = await BambuCloudApi.createPrintTask(
+                      // 5. Start Print via Cloud API
+                      showDialog({ title: 'Đang khởi động', message: 'Đang yêu cầu Server ra lệnh in...', hideCancel: true });
+                      const taskResponse = await BambuCloudApi.startPrintJob(
                         cloudToken,
-                        file.name,
                         serial,
                         file.name,
-                        fileUrl, // Sometimes bambu expects s3 url without query params, but full url works mostly
-                        file.size,
-                        md5Hash
+                        fileUrl
                       );
-
-                                                                                                              // 6. Send API Command to start printing
-                      showDialog({ title: 'Đang bắt đầu in', message: 'Đang đánh thức máy in qua Cloud MQTT...', hideCancel: true });
-                      const taskId = taskResponse?.task_id || taskResponse?.id || taskResponse?.taskId || taskResponse?.modelId || "0";
-                      
-                      await bambuBridge.startCloudPrint(serial, fileUrl, md5Hash, file.name, taskId);
                       
                       const debugStr = `Task: ${JSON.stringify(taskResponse).substring(0, 50)}... URL: ${fileUrl.substring(0, 30)}...`;
-                      showDialog({ title: 'Thành công', message: `Đã gửi lệnh in! [${debugStr}]`, hideCancel: true });
+                      showDialog({ title: 'Thành công', message: `Đã gửi lệnh in qua Server! [${debugStr}]`, hideCancel: true });
                       setTimeout(() => fetchTasks(), 3000);
                     } catch (err: any) {
                       console.error('Upload error:', err);

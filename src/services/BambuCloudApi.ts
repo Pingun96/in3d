@@ -228,7 +228,7 @@ export class BambuCloudApi {
         file_url: cleanUrl,
         settings: {
           timelapse: false,
-          bed_levelling: true,
+          bed_leveling: true,
           flow_cali: false,
           vibration_cali: false,
           layer_inspect: false,
