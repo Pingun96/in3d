@@ -154,11 +154,13 @@ export function PrintScreen({ cloudToken, serial, onPrintAgain }: PrintScreenPro
                       );
 
                                                                                                               // 6. Send API Command to start printing
-                      showDialog({ title: 'Đang bắt đầu in', message: 'Đang đánh thức máy in qua Cloud API...', hideCancel: true });
+                      showDialog({ title: 'Đang bắt đầu in', message: 'Đang đánh thức máy in qua Cloud MQTT...', hideCancel: true });
                       const taskId = taskResponse?.task_id || taskResponse?.id || taskResponse?.taskId || taskResponse?.modelId || "0";
-                      const printResponse = await BambuCloudApi.startPrintJob(cloudToken, serial, file.name, fileUrl, taskId);
                       
-                      const debugStr = `Task: ${JSON.stringify(taskResponse).substring(0, 50)}... Print: ${JSON.stringify(printResponse).substring(0, 50)}...`;
+                      const cleanUrl = fileUrl.split('?')[0];
+                      await bambuBridge.startCloudPrint(serial, cleanUrl, md5, file.name, taskId);
+                      
+                      const debugStr = `Task: ${JSON.stringify(taskResponse).substring(0, 50)}... URL: ${cleanUrl.substring(0, 30)}...`;
                       showDialog({ title: 'Thành công', message: `Đã gửi lệnh in! [${debugStr}]`, hideCancel: true });
                       setTimeout(() => fetchTasks(), 3000);
                     } catch (err: any) {
