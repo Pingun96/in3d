@@ -219,10 +219,13 @@ export class BambuCloudApi {
    */
   static async startPrintJob(token: string, deviceId: string, filename: string, url: string, taskId?: string): Promise<any> {
     try {
-            const data: any = {
+      // Strip AWS query params from S3 URL for the Cloud Print API
+      const cleanUrl = url.split('?')[0];
+
+      const data: any = {
         device_id: deviceId,
         file_name: filename,
-        file_url: url,
+        file_url: cleanUrl,
         settings: {
           timelapse: false,
           bed_levelling: true,
@@ -233,10 +236,7 @@ export class BambuCloudApi {
           ams_mapping: ""
         }
       };
-      if (taskId && taskId !== "0") {
-        data.task_id = taskId;
-        data.file_id = taskId;
-      }
+      // Do not send file_id or task_id if they are just task IDs, as it causes 400 Bad Request
       
       const response = await CapacitorHttp.post({
         url: `${BASE_URL_IOT}/api/user/print`,
@@ -247,8 +247,8 @@ export class BambuCloudApi {
         data: data
       });
       
-      if (response.status !== 200 || (response.data && response.data.code && response.data.code !== 0 && response.data.code !== 200)) {
-        throw new Error(`Lỗi Start Print API: ${JSON.stringify(response.data)}`);
+            if (response.status !== 200 || (response.data && response.data.code && response.data.code !== 0 && response.data.code !== 200)) {
+        throw new Error(`HTTP ${response.status} | URL: ${response.url} | Body: ${JSON.stringify(response.data)}`);
       }
       return response.data;
     } catch (err: any) {
