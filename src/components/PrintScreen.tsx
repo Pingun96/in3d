@@ -153,15 +153,12 @@ export function PrintScreen({ cloudToken, serial, onPrintAgain }: PrintScreenPro
                         md5Hash
                       );
 
-                                                                  // 6. Send API Command to start printing
+                                                                                        // 6. Send API Command to start printing
                       showDialog({ title: 'Đang bắt đầu in', message: 'Đang đánh thức máy in qua Cloud API...', hideCancel: true });
                       const taskId = taskResponse?.task_id || taskResponse?.id || taskResponse?.modelId || "0";
-                      const printResponse = await BambuCloudApi.startPrintJob(cloudToken, serial, file.name, fileUrl, taskId);
+                      await BambuCloudApi.startPrintJob(cloudToken, serial, file.name, fileUrl, taskId);
                       
-                      // For debugging: Throw an error intentionally so we can see the full JSON response from both APIs
-                      throw new Error(`DEBUG INFO - Vui lòng gửi nội dung này cho tôi:
-Task: ${JSON.stringify(taskResponse)}
-Print: ${JSON.stringify(printResponse)}`);
+                      showDialog({ title: 'Thành công', message: 'Đã gửi lệnh in Cloud thành công! Máy in sẽ sớm bắt đầu.', hideCancel: true });
 
                       showDialog({ title: 'Thành công', message: 'Đã gửi lệnh in Cloud thành công! Máy in sẽ sớm bắt đầu.', hideCancel: true });
                       setTimeout(() => fetchTasks(), 3000);

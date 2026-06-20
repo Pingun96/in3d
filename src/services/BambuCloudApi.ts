@@ -219,10 +219,19 @@ export class BambuCloudApi {
    */
   static async startPrintJob(token: string, deviceId: string, filename: string, url: string, taskId?: string): Promise<any> {
     try {
-      const data: any = {
+            const data: any = {
         device_id: deviceId,
         file_name: filename,
-        file_url: url
+        file_url: url,
+        settings: {
+          timelapse: false,
+          bed_levelling: true,
+          flow_cali: false,
+          vibration_cali: false,
+          layer_inspect: false,
+          use_ams: false,
+          ams_mapping: ""
+        }
       };
       if (taskId && taskId !== "0") {
         data.task_id = taskId;
