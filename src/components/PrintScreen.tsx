@@ -158,7 +158,7 @@ export function PrintScreen({ cloudToken, serial, onPrintAgain }: PrintScreenPro
                       const taskId = taskResponse?.task_id || taskResponse?.id || taskResponse?.taskId || taskResponse?.modelId || "0";
                       
                       const cleanUrl = fileUrl.split('?')[0];
-                      await bambuBridge.startCloudPrint(serial, cleanUrl, file.md5, file.name, taskId);
+                      await bambuBridge.startCloudPrint(serial, cleanUrl, md5Hash, file.name, taskId);
                       
                       const debugStr = `Task: ${JSON.stringify(taskResponse).substring(0, 50)}... URL: ${cleanUrl.substring(0, 30)}...`;
                       showDialog({ title: 'Thành công', message: `Đã gửi lệnh in! [${debugStr}]`, hideCancel: true });
