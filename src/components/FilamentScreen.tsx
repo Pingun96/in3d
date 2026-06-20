@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { BookOpen, Settings, X, Wrench, ChevronLeft, ChevronDown, Pencil } from 'lucide-react';
+import { BookOpen, Settings, X, Wrench, ChevronLeft, ChevronDown, Pencil, Plus, Edit2, Trash2, Link as LinkIcon, Unlink } from 'lucide-react';
+import { useInventory, FilamentSpool } from '../context/InventoryContext';
 
 interface FilamentScreenProps {
   amsList: any[];
@@ -22,6 +23,8 @@ export function FilamentScreen({
   machineStatus,
   editAmsFilament
 }: FilamentScreenProps) {
+  
+  const { spools, addSpool, updateSpool, deleteSpool, assignToAms, getSpoolByAmsSlot } = useInventory();
   
   const [selectedTray, setSelectedTray] = useState<number | null>(null);
 
@@ -328,12 +331,18 @@ export function FilamentScreen({
     );
   };
 
-  const Spool = React.forwardRef(({ color, label, material, isActive, isEmpty, onClick, lineLength = 20 }: any, ref: any) => (
+  const Spool = React.forwardRef(({ color, label, material, isActive, isEmpty, onClick, lineLength = 20, remaining }: any, ref: any) => (
     <div ref={ref} className="flex flex-col items-center relative cursor-pointer group" onClick={onClick}>
       {/* Dashed line and Material text */}
-      <div className="flex flex-col items-center mb-1">
+      <div className="flex flex-col items-center mb-1 w-full">
         <span className="text-[#a0a0a0] text-[11px] font-bold tracking-wider h-4 whitespace-nowrap">{isEmpty ? '' : material}</span>
-        <div className="h-6 w-px border-l-2 border-dashed border-[#555] my-1"></div>
+        {/* Remaining Bar */}
+        {remaining !== undefined && !isEmpty && (
+          <div className="w-8 h-[3px] bg-[#333] rounded-full mt-1 overflow-hidden">
+            <div className="h-full bg-white" style={{ width: `${remaining}%` }}></div>
+          </div>
+        )}
+        <div className="h-4 w-px border-l-2 border-dashed border-[#555] my-1"></div>
       </div>
       
       {/* Spool Body */}
@@ -367,12 +376,13 @@ export function FilamentScreen({
   ));
 
   return (
-    <div className="flex flex-1 w-full h-full bg-[#111] overflow-hidden relative items-center justify-center">
+    <div className="flex flex-col flex-1 w-full h-full bg-[#111] overflow-y-auto relative">
       
       {renderTrayModal()}
       {renderEditModal()}
 
-      <div className="relative flex flex-col items-center scale-[0.85] sm:scale-100 mt-0 sm:mt-[-40px] origin-center">
+      {/* AMS Visualizer Section */}
+      <div className="relative flex flex-col items-center justify-center min-h-[300px] sm:min-h-[400px] scale-[0.85] sm:scale-100 origin-top mt-4 sm:mt-12">
         
         <div className="flex relative z-10">
           
@@ -388,6 +398,9 @@ export function FilamentScreen({
                  const colorHex = tray.tray_color ? `#${tray.tray_color.substring(0,6)}` : '#ffffff';
                  const material = tray.tray_sub_brands ? tray.tray_sub_brands : (tray.tray_type || 'PLA');
                  
+                 const inventorySpool = getSpoolByAmsSlot(trayIdNum);
+                 const remainingPercent = inventorySpool ? (inventorySpool.remainingWeight / inventorySpool.totalWeight) * 100 : undefined;
+                 
                  return (
                    <Spool 
                      key={idx}
@@ -398,6 +411,7 @@ export function FilamentScreen({
                      isActive={isActive}
                      isEmpty={isEmpty}
                      lineLength={21}
+                     remaining={remainingPercent}
                      onClick={(e: React.MouseEvent) => { if (!isEmpty) openTrayModal(trayIdNum, e); }}
                    />
                  );
@@ -426,6 +440,7 @@ export function FilamentScreen({
                isActive={currentActiveTray === 254}
                isEmpty={false}
                lineLength={22}
+               remaining={getSpoolByAmsSlot(254) ? (getSpoolByAmsSlot(254)!.remainingWeight / getSpoolByAmsSlot(254)!.totalWeight) * 100 : undefined}
                onClick={(e: React.MouseEvent) => openTrayModal(254, e)}
              />
           </div>
@@ -464,15 +479,111 @@ export function FilamentScreen({
 
       </div>
 
-      <div className="absolute bottom-3 right-3 sm:bottom-6 sm:right-6 flex items-center gap-2 sm:gap-3">
-         <div className="w-8 h-8 sm:w-10 sm:h-10 bg-[#2b2b2d] rounded-[8px] border border-[#3a3a3c] flex items-center justify-center cursor-pointer hover:bg-[#353535] transition-colors">
-           <Wrench size={18} className="text-[#a0a0a0]" />
-         </div>
-         <div className="bg-[#2b2b2d] rounded-[8px] border border-[#3a3a3c] px-6 h-10 flex items-center gap-2 cursor-pointer hover:bg-[#353535] transition-colors">
-           <span className="text-[#d0d0d0] font-medium text-sm tracking-wide">Guide</span>
-         </div>
+      {/* Inventory Section */}
+      <div className="w-full max-w-4xl mx-auto px-4 mt-8 pb-24">
+        <div className="flex justify-between items-center mb-6">
+          <div>
+            <h3 className="text-xl font-bold text-white">Kho Nhựa Của Bạn</h3>
+            <p className="text-[#a0a0a0] text-sm mt-1">Hệ thống sẽ tự động trừ hao khi in xong</p>
+          </div>
+          <button 
+            onClick={() => {
+              const name = prompt('Nhập tên cuộn nhựa mới (vd: PLA Đỏ eSun):');
+              if (name) {
+                const total = prompt('Tổng trọng lượng (g):', '1000');
+                if (total) {
+                  addSpool({
+                    name, brand: 'Generic', type: 'PLA', color: '#ff0000', totalWeight: Number(total), remainingWeight: Number(total), amsAssigned: null
+                  });
+                }
+              }
+            }}
+            className="bg-[#00c853] hover:bg-[#00e676] text-black w-10 h-10 rounded-full flex items-center justify-center transition-colors shadow-lg shadow-[#00c853]/20"
+          >
+            <Plus size={24} />
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {spools.length === 0 ? (
+            <div className="col-span-full text-center py-8 bg-[#1a1a1b] rounded-2xl border border-white/5">
+              <p className="text-[#666] mb-4">Kho nhựa đang trống</p>
+            </div>
+          ) : (
+            spools.map(spool => (
+              <div key={spool.id} className="bg-[#1a1a1b] rounded-2xl p-4 border border-white/5 relative flex flex-col">
+                <div className="flex justify-between items-start mb-3">
+                  <div className="flex items-center gap-3">
+                    <div 
+                      className="w-10 h-10 rounded-full border-2 border-white/10 shadow-inner flex items-center justify-center text-xs font-bold"
+                      style={{ backgroundColor: spool.color, color: parseInt(spool.color.replace('#', ''), 16) > 0x888888 ? '#000' : '#FFF' }}
+                    >
+                      {spool.type}
+                    </div>
+                    <div>
+                      <h3 className="text-white font-semibold truncate pr-4 text-sm">{spool.name}</h3>
+                      <p className="text-[#888] text-xs">{spool.brand}</p>
+                    </div>
+                  </div>
+                  
+                  <button 
+                    onClick={() => {
+                      if(window.confirm('Xoá cuộn nhựa này?')) deleteSpool(spool.id);
+                    }}
+                    className="p-1.5 text-[#888] hover:text-[#ff5252] bg-[#2a2a2b] rounded-lg transition-colors"
+                  >
+                    <Trash2 size={14} />
+                  </button>
+                </div>
+
+                <div className="mt-2 flex-1">
+                  <div className="flex justify-between text-[11px] mb-1">
+                    <span className="text-[#a0a0a0]">Còn lại</span>
+                    <span className="text-white font-medium">
+                      {Math.round(spool.remainingWeight)}g / {spool.totalWeight}g
+                    </span>
+                  </div>
+                  <div className="h-1.5 w-full bg-[#333] rounded-full overflow-hidden">
+                    <div 
+                      className="h-full rounded-full transition-all duration-500"
+                      style={{ 
+                        width: `${Math.max(0, Math.min(100, (spool.remainingWeight / spool.totalWeight) * 100))}%`,
+                        backgroundColor: spool.color 
+                      }}
+                    />
+                  </div>
+                </div>
+
+                <div className="mt-4 pt-3 border-t border-white/10 flex justify-between items-center">
+                  {spool.amsAssigned !== null ? (
+                    <div className="flex items-center gap-2 text-[#00c853] text-[12px] font-medium">
+                      <LinkIcon size={14} />
+                      <span>Khay {spool.amsAssigned === 254 ? 'Ext' : spool.amsAssigned + 1}</span>
+                      <button onClick={() => assignToAms(spool.id, null)} className="ml-1 text-[#888] hover:text-[#ff5252]">
+                        <Unlink size={14} />
+                      </button>
+                    </div>
+                  ) : (
+                    <select 
+                      className="text-[12px] bg-[#2a2a2b] text-white border border-white/10 rounded px-2 py-1 outline-none focus:border-[#00c853]"
+                      onChange={(e) => assignToAms(spool.id, e.target.value ? Number(e.target.value) : null)}
+                      value=""
+                    >
+                      <option value="">Gán vào khay...</option>
+                      <option value="0">Khay A1</option>
+                      <option value="1">Khay A2</option>
+                      <option value="2">Khay A3</option>
+                      <option value="3">Khay A4</option>
+                      <option value="254">Khay Ext</option>
+                    </select>
+                  )}
+                </div>
+              </div>
+            ))
+          )}
+        </div>
       </div>
-      
+
     </div>
   );
 }

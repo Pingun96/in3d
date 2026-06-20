@@ -6,7 +6,8 @@ import { bambuBridge } from './services/BambuBridge';
 import { BambuCloudApi, type BambuDevice } from './services/BambuCloudApi';
 import { CapacitorHttp } from '@capacitor/core';
 import { LocalNotifications } from '@capacitor/local-notifications';
-import { useNotification } from './context/NotificationContext';
+import { NotificationProvider, useNotification } from './context/NotificationContext';
+import { InventoryProvider } from './context/InventoryContext';
 
 function throttle<T extends (...args: any[]) => any>(func: T, limit: number): T {
   let inThrottle: boolean;
@@ -32,10 +33,12 @@ function throttle<T extends (...args: any[]) => any>(func: T, limit: number): T 
 // Store the latest blob URL to revoke it and prevent memory leaks
 let lastBlobUrl = '';
 
-export default function App() {
+function AppContent() {
   const [isConnected, setIsConnected] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
   // connectionError removed in favor of showToast
+  const { showToast } = useNotification();
+  const { deductFilament } = useInventory();
   
   const [ip, setIp] = useState(() => localStorage.getItem('bambu_ip') || '');
   const [accessCode, setAccessCode] = useState(() => localStorage.getItem('bambu_code') || '');
@@ -327,6 +330,29 @@ export default function App() {
                     }]
                   });
                 } catch (e) {}
+
+                // Trigger Filament Deduction
+                if (cloudToken) {
+                  // Wait 5 seconds for Bambu cloud to finalize task data
+                  setTimeout(async () => {
+                    try {
+                      const tasks = await BambuCloudApi.getTasks(cloudToken);
+                      if (tasks && tasks.length > 0) {
+                        const latestTask = tasks[0];
+                        if (latestTask.amsDetailMapping && Array.isArray(latestTask.amsDetailMapping)) {
+                          latestTask.amsDetailMapping.forEach((mapping: any) => {
+                            if (mapping.ams !== undefined && mapping.weight > 0) {
+                              deductFilament(mapping.ams, mapping.weight);
+                              showToast(`Đã tự động trừ ${mapping.weight}g nhựa ở Khay ${mapping.ams === 254 ? 'Ext' : mapping.ams + 1}`, 'success');
+                            }
+                          });
+                        }
+                      }
+                    } catch (e) {
+                      console.error("Failed to fetch task for filament deduction", e);
+                    }
+                  }, 5000);
+                }
               }
               if (prev !== 'FAILED' && printData.gcode_state === 'FAILED') {
                 try {
@@ -675,8 +701,6 @@ export default function App() {
     bambuBridge.amsChangeFilament(serial, targetTray);
   }, [serial]);
 
-  const { showToast } = useNotification();
-
   const onPrintAgain = useCallback((task: any) => {
     // Send print_project command to start printing again
     bambuBridge.publish(`device/${serial}/request`, {
@@ -839,5 +863,15 @@ export default function App() {
         </div>
       )}
     </>
+  );
+}
+
+export default function App() {
+  return (
+    <NotificationProvider>
+      <InventoryProvider>
+        <AppContent />
+      </InventoryProvider>
+    </NotificationProvider>
   );
 }
