@@ -160,12 +160,6 @@ export function PrintScreen({ cloudToken, serial, onPrintAgain }: PrintScreenPro
                       
                       const debugStr = `Task: ${JSON.stringify(taskResponse).substring(0, 50)}... Print: ${JSON.stringify(printResponse).substring(0, 50)}...`;
                       showDialog({ title: 'Thành công', message: `Đã gửi lệnh in! [${debugStr}]`, hideCancel: true });
-                      const taskId = taskResponse?.task_id || taskResponse?.id || taskResponse?.modelId || "0";
-                      await BambuCloudApi.startPrintJob(cloudToken, serial, file.name, fileUrl, taskId);
-                      
-                      showDialog({ title: 'Thành công', message: 'Đã gửi lệnh in Cloud thành công! Máy in sẽ sớm bắt đầu.', hideCancel: true });
-
-                      showDialog({ title: 'Thành công', message: 'Đã gửi lệnh in Cloud thành công! Máy in sẽ sớm bắt đầu.', hideCancel: true });
                       setTimeout(() => fetchTasks(), 3000);
                     } catch (err: any) {
                       console.error('Upload error:', err);
