@@ -153,8 +153,13 @@ export function PrintScreen({ cloudToken, serial, onPrintAgain }: PrintScreenPro
                         md5Hash
                       );
 
-                                                                                        // 6. Send API Command to start printing
+                                                                                                              // 6. Send API Command to start printing
                       showDialog({ title: 'Đang bắt đầu in', message: 'Đang đánh thức máy in qua Cloud API...', hideCancel: true });
+                      const taskId = taskResponse?.task_id || taskResponse?.id || taskResponse?.taskId || taskResponse?.modelId || "0";
+                      const printResponse = await BambuCloudApi.startPrintJob(cloudToken, serial, file.name, fileUrl, taskId);
+                      
+                      const debugStr = `Task: ${JSON.stringify(taskResponse).substring(0, 50)}... Print: ${JSON.stringify(printResponse).substring(0, 50)}...`;
+                      showDialog({ title: 'Thành công', message: `Đã gửi lệnh in! [${debugStr}]`, hideCancel: true });
                       const taskId = taskResponse?.task_id || taskResponse?.id || taskResponse?.modelId || "0";
                       await BambuCloudApi.startPrintJob(cloudToken, serial, file.name, fileUrl, taskId);
                       
