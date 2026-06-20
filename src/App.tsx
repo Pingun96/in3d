@@ -7,7 +7,7 @@ import { BambuCloudApi, type BambuDevice } from './services/BambuCloudApi';
 import { CapacitorHttp } from '@capacitor/core';
 import { LocalNotifications } from '@capacitor/local-notifications';
 import { NotificationProvider, useNotification } from './context/NotificationContext';
-import { InventoryProvider } from './context/InventoryContext';
+import { InventoryProvider, useInventory } from './context/InventoryContext';
 
 function throttle<T extends (...args: any[]) => any>(func: T, limit: number): T {
   let inThrottle: boolean;

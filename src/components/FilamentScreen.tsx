@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { BookOpen, Settings, X, Wrench, ChevronLeft, ChevronDown, Pencil, Plus, Edit2, Trash2, Link as LinkIcon, Unlink } from 'lucide-react';
-import { useInventory, FilamentSpool } from '../context/InventoryContext';
+import { useInventory, type FilamentSpool } from '../context/InventoryContext';
 
 interface FilamentScreenProps {
   amsList: any[];
