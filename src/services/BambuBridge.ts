@@ -371,7 +371,8 @@ class BambuBridge {
         flow_cali: false,
         vibration_cali: false,
         layer_inspect: false,
-        use_ams: false
+        use_ams: false,
+        ams_mapping: [0]
       }
     };
     return this.publish(topic, payload);
