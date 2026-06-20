@@ -141,17 +141,13 @@ export function PrintScreen({ cloudToken, serial, onPrintAgain }: PrintScreenPro
                         await BambuCloudApi.uploadToS3(sizeUrl, file.size.toString());
                       }
 
-                      // 5. Start Print via Cloud API
-                      showDialog({ title: 'Đang khởi động', message: 'Đang yêu cầu Server ra lệnh in...', hideCancel: true });
-                      const taskResponse = await BambuCloudApi.startPrintJob(
-                        cloudToken,
-                        serial,
-                        file.name,
-                        fileUrl
-                      );
+                      // 5. Start Print via MQTT (using Clean URL)
+                      showDialog({ title: 'Đang khởi động', message: 'Đang gửi lệnh in tới máy in qua MQTT...', hideCancel: true });
+                      const cleanUrl = fileUrl.split('?')[0];
+                      await bambuBridge.startCloudPrint(serial, cleanUrl, md5Hash, file.name, "0");
                       
-                      const debugStr = `Task: ${JSON.stringify(taskResponse).substring(0, 50)}... URL: ${fileUrl.substring(0, 30)}...`;
-                      showDialog({ title: 'Thành công', message: `Đã gửi lệnh in qua Server! [${debugStr}]`, hideCancel: true });
+                      const debugStr = `URL: ${cleanUrl.substring(0, 30)}...`;
+                      showDialog({ title: 'Thành công', message: `Đã gửi lệnh in! [${debugStr}]`, hideCancel: true });
                       setTimeout(() => fetchTasks(), 3000);
                     } catch (err: any) {
                       console.error('Upload error:', err);
